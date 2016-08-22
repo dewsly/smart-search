@@ -31,7 +31,7 @@ The search query string (default: '')
 Function called when query changes and is >= minCharacters
 
 `results`
-Array of grouped results, used for rendering the listing of result items
+Array of grouped results, used for rendering the listing of result items. See Results Object section for details on expected formatting.
 
 `renderItem`
 Function returning JSX. Used to render the selected item.
@@ -40,10 +40,10 @@ Function returning JSX. Used to render the selected item.
 Function returning JSX. Used to render the selected item.
 
 `onSelect`
-Callback notification when item has been selected.
+If provided, this callback will be triggered when an item has been selected. The callback will be passed the selected item object.
 
 `onRemove`
-Callback notification when item removed.
+If provided, this callback will be triggered when an item has been removed. The callback will be passed the removed item object.
 
 `minCharacters`
 The minimum characters the query should be before triggering the search (default: 3)
@@ -53,3 +53,40 @@ Boolean value to specify whether to leverage caching (default: true)
 
 `showGroupHeading`
 Specify whether or not to render the group headings (default: true)
+
+## Results Object
+The results are expected to be an array of 0+ groups. Each group should have a `label` that will be used as the group heading in the render (unless `showGroupHeading` is falsy) and a set of `items` which represent the items within that group.
+
+Example `results` object:
+```
+[
+  {
+    'key': 'people',
+    'label': 'People',
+    'items': [
+      {
+        'name': 'Alf',
+        'id': '1'
+      },
+      {
+        'name': 'Bananas',
+        'id': '2'
+      }
+    ]
+  },
+  {
+    'key': 'schools',
+    'label': 'Schools',
+    'items': [
+      {
+        'name': 'School #1',
+        'id': '3'
+      },
+      {
+        'name': 'School #2',
+        'id': '5'
+      }
+    ]
+  }
+]
+```
