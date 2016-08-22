@@ -10,15 +10,46 @@
 
 ```
 <SmartSearch
-  search
-  results
-  renderItem
-  renderSelectedItem
-  onSelect
-  onRemove
-  minCharacters
-  cache
+  query={String}
+  search={Function}
+  results={Array}
+  renderItem={Function}
+  renderSelectedItem={Function}
+  onSelect={Function}
+  onRemove={Function}
+  minCharacters={Number}
+  cache={Boolean}
+  showGroupHeading={Boolean}
 />
 ```
 
-### Parameters
+## Parameters
+`query`
+The search query string (default: '')
+
+`search`
+Function called when query changes and is >= minCharacters
+
+`results`
+Array of grouped results, used for rendering the listing of result items
+
+`renderItem`
+Function returning JSX. Used to render the selected item.
+
+`renderSelectedItem`
+Function returning JSX. Used to render the selected item.
+
+`onSelect`
+Callback notification when item has been selected.
+
+`onRemove`
+Callback notification when item removed.
+
+`minCharacters`
+The minimum characters the query should be before triggering the search (default: 3)
+
+`cache`
+Boolean value to specify whether to leverage caching (default: true)
+
+`showGroupHeading`
+Specify whether or not to render the group headings (default: true)

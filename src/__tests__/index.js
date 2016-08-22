@@ -105,79 +105,117 @@ describe('Shallow Rendering', () => {
     expect(onRemove.calledOnce).to.equal(true);
   });
 
+  it('renders group heading when showGroupHeading is truthy', () => {
+    const wrapper = shallow(
+      <SmartSearch
+        showGroupHeading={true}
+        results={results} />
+    );
+    expect(wrapper.find('.ss-group-heading')).to.have.length(2);
+  });
+
+  it('does not render group headings when showGroupHeading is falsy', () => {
+    const wrapper = shallow(
+      <SmartSearch
+        showGroupHeading={false}
+        resluts={results} />
+    );
+    expect(wrapper.find('.ss-group-heading')).to.have.length(0);
+  });
+
 });
 
 // Full DOM Rendering
 // https://github.com/airbnb/enzyme/blob/master/docs/api/mount.md
 describe('Full DOM Rendering', () => {
+  let results = [];
+  let noresults = [];
 
-    it('should not trigger props.search when props.query.lengths < props.minCharacters', () => {
-      const search = sinon.spy();
-      let results = [];
-      const wrapper = mount(<SmartSearch search={search} query='' results={results} />);
-      expect(wrapper.props().query).to.equal('');
-      wrapper.setProps({ query: 'se' });
-      expect(wrapper.props().query).to.equal('se');
-      expect(search.called).to.equal(false);
-    });
+  before(function (done) {
+    results = [
+      {
+        'key': 'people',
+        'label': 'People',
+        'items': [
+          {
+            'name': 'Alf',
+            'id': '1'
+          },
+          {
+            'name': 'Bananas',
+            'id': '2'
+          }
+        ]
 
-    it('should trigger props.search when props.query.length >= props.minCharacters', () => {
-      const search = sinon.spy();
-      let results = [];
-      const wrapper = mount(<SmartSearch search={search} query='' results={results} />);
-      expect(wrapper.props().query).to.equal('');
-      wrapper.setProps({ query: 'search' });
-      expect(wrapper.props().query).to.equal('search');
-      expect(search.calledOnce).to.equal(true);
-    });
+      },
+      {
+        'key': 'schools',
+        'label': 'Schools',
+        'items': [
+          {
+            'name': 'School #1',
+            'id': '3'
+          },
+          {
+            'name': 'School #2',
+            'id': '5'
+          }
+        ]
 
-    it('should not trigger props.search when searching for a cached query', () => {
-      const search = sinon.spy();
-      let noresults = [];
-      let results = [
-        {
-          'key': 'Best Results',
-          'label': 'Best Results',
-          'items': [
-            {
-              'name': 'Alf',
-              'id': '1'
-            },
-            {
-              'name': 'Bananas',
-              'id': '2'
-            }
-          ]
+      }
+    ];
 
-        },
-        {
-          'key': 'Worst Results',
-          'label': 'Worst Results',
-          'items': [
-            {
-              'name': 'Dumb',
-              'id': '3'
-            },
-            {
-              'name': 'Stupid',
-              'id': '5'
-            }
-          ]
+    done();
+  });
 
-        }
-      ];
-      const wrapper = mount(<SmartSearch search={search} query='' results={noresults} />);
-      expect(wrapper.props().query).to.equal('');
+  it('should not trigger props.search when props.query.lengths < props.minCharacters', () => {
+    const search = sinon.spy();
+    const wrapper = mount(<SmartSearch search={search} query='' results={noresults} />);
+    expect(wrapper.props().query).to.equal('');
+    wrapper.setProps({ query: 'se' });
+    expect(wrapper.props().query).to.equal('se');
+    expect(search.called).to.equal(false);
+  });
 
-      wrapper.setProps({ query: 'search', results:results });
-      expect(wrapper.props().query).to.equal('search');
-/*
-      wrapper.setProps({ query: 'se', results: noresults });
-      expect(wrapper.props().query).to.equal('se');
-      wrapper.setProps({ query: 'search', results: results });
-      expect(wrapper.props().query).to.equal('search');
-*/
-      expect(search.callCount).to.equal(1);
-    });
+  it('should trigger props.search when props.query.length >= props.minCharacters', () => {
+    const search = sinon.spy();
+    const wrapper = mount(<SmartSearch search={search} query='' results={noresults} />);
+    expect(wrapper.props().query).to.equal('');
+    wrapper.setProps({ query: 'search' });
+    expect(wrapper.props().query).to.equal('search');
+    expect(search.calledOnce).to.equal(true);
+  });
+
+  it('should not trigger props.search when searching for a cached query', () => {
+    const search = sinon.spy();
+
+    const wrapper = mount(<SmartSearch cache={true} search={search} query='' results={noresults} />);
+    expect(wrapper.props().query).to.equal('');
+
+    wrapper.setProps({ query: 'search', results:results });
+    expect(wrapper.props().query).to.equal('search');
+    wrapper.setProps({ query: 'se', results: noresults });
+    expect(wrapper.props().query).to.equal('se');
+    wrapper.setProps({ query: 'search', results: results });
+    expect(wrapper.props().query).to.equal('search');
+
+    expect(search.callCount).to.equal(1);
+  });
+
+  it('should trigger props.search multiple times when cache disabled', () => {
+    const search = sinon.spy();
+
+    const wrapper = mount(<SmartSearch cache={false} search={search} query='' results={noresults} />);
+    expect(wrapper.props().query).to.equal('');
+
+    wrapper.setProps({ query: 'searc', results:results });
+    expect(wrapper.props().query).to.equal('searc');
+    wrapper.setProps({ query: 'search', results: noresults });
+    expect(wrapper.props().query).to.equal('search');
+    wrapper.setProps({ query: 'searc', results: results });
+    expect(wrapper.props().query).to.equal('searc');
+
+    expect(search.callCount).to.equal(3);
+  });
 
 });

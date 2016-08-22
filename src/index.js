@@ -9,6 +9,7 @@ class SmartSearch extends React.Component {
      * @property {string} query search query
      * @property {array} selected array of selected items
      * @property {object} cache object map of query -> results
+     * @property {object} cachedResults array of results to use when caching enabled
      */
     this.state = {
       query: '',
@@ -116,7 +117,8 @@ class SmartSearch extends React.Component {
             <div
               className="ss-group"
               key={results.key}>
-              <h3>{results.label}</h3>
+              {this.props.showGroupHeading ?
+                <h3 className="ss-group-heading">{results.label}</h3> : '' }
               {results.items.map(result =>
                 <div
                   className="ss-item"
@@ -135,46 +137,21 @@ class SmartSearch extends React.Component {
 }
 
 SmartSearch.propTypes = {
-  /**
-   * The value of the search query
-   */
   query: React.PropTypes.string.isRequired,
-  /**
-   * Function called when query changes
-   */
   search: React.PropTypes.func.isRequired,
-  /**
-   * Function returning JSX. Used to render each result
-   */
   renderItem: React.PropTypes.func,
-  /**
-   * Function returning JSX. Used to render the selected item
-   */
   renderSelectedItem: React.PropTypes.func,
-  /**
-   * Callback notification when item is selected.
-   */
   onSelect: React.PropTypes.func,
-  /**
-   * Callback notification when item removed.
-   */
   onRemove: React.PropTypes.func,
-  /**
-   * Array of grouped results, used for rendering the listing of result items
-   */
   results: React.PropTypes.array,
-  /**
-   * Boolean value to specify whether to leverage caching
-   */
   cache: React.PropTypes.bool,
-  /**
-   * The minimum characters the query should be before triggering the search
-   */
-  minCharacters: React.PropTypes.number
+  minCharacters: React.PropTypes.number,
+  showGroupHeading: React.PropTypes.bool
 };
 SmartSearch.defaultProps = {
   query: '',
   cache: true,
-  minCharacters: 3
+  minCharacters: 3,
+  showGroupHeading: true
 };
 export default SmartSearch;
