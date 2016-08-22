@@ -115,7 +115,7 @@ class SmartSearch extends React.Component {
         <input
           type="text"
           name="search"
-          value={this.props.query} />
+          value={this.state.query} />
         <div className="ss-results">
           {_results && _results.map(results =>
             <div
