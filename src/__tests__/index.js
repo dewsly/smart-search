@@ -50,6 +50,11 @@ describe('Shallow Rendering', () => {
     done();
   });
 
+  it('updates .ss-label based on label parameter', () => {
+    const wrapper = shallow(<SmartSearch label="NEW LABEL" />);
+    expect(wrapper.find('.ss-label').text()).to.equal('NEW LABEL');
+  });
+
   it('to have 0 .ss-group elements when no results', () => {
     const wrapper = shallow(<SmartSearch />);
     expect(wrapper.find('.ss-group')).to.have.length(0);

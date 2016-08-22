@@ -72,6 +72,10 @@ class SmartSearch extends React.Component {
     return this.props.renderItem ? this.props.renderItem(item) : JSON.stringify(item);
   }
 
+  _renderLabel() {
+    return this.props.label || 'Search';
+  }
+
   _renderSelectedItem(item) {
     return this.props.renderSelectedItem ? this.props.renderSelectedItem(item) : JSON.stringify(item);
   }
@@ -107,7 +111,7 @@ class SmartSearch extends React.Component {
             {this._renderSelectedItem(item)}
           </div>
         )}
-        <span className="label">Search</span>
+        <span className="ss-label">{this._renderLabel()}</span>
         <input
           type="text"
           name="search"

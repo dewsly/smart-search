@@ -10,6 +10,7 @@
 
 ```
 <SmartSearch
+  label={String}
   query={String}
   search={Function}
   results={Array}
@@ -24,6 +25,9 @@
 ```
 
 ## Parameters
+`label`
+The search label string (default: 'Search')
+
 `query`
 The search query string (default: '')
 
