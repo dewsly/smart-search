@@ -51,7 +51,7 @@
 **Description:** The search query string (default: '')
 
 ### `results`
-**Type:** Object (See the [Results Object](#results-object) section)
+**Type:** Array (See the [Results Array](#results-array) section)
 
 **Description:** Array of grouped results, used for rendering the listing of result items.
 
@@ -80,10 +80,10 @@
 
 **Description:** Specify whether or not to render the group headings (default: true)
 
-## Results Object
+## Results Array
 The results are expected to be an array of 0+ groups. Each group should have a `label` that will be used as the group heading in the render (unless `showGroupHeading` is falsy) and an array of `items`, which represent the selectable items within a group.
 
-Example `results` object:
+Example `results` array:
 ```
 [
   {
