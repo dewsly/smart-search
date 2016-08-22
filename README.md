@@ -34,10 +34,10 @@ Function called when query changes and is >= minCharacters
 Array of grouped results, used for rendering the listing of result items. See Results Object section for details on expected formatting.
 
 `renderItem`
-Function returning JSX. Used to render the selected item.
+Function returning JSX. Used to customize the rendering of a result item.
 
 `renderSelectedItem`
-Function returning JSX. Used to render the selected item.
+Function returning JSX. Used to customize the rendering of a selected item.
 
 `onSelect`
 If provided, this callback will be triggered when an item has been selected. The callback will be passed the selected item object.
