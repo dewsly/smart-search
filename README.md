@@ -10,12 +10,11 @@
 
 ```
 <SmartSearch
-  label={String}
-  query={String}
   search={Function}
-  results={Array}
   renderItem={Function}
   renderSelectedItem={Function}
+  query={String}
+  results={Array}
   onSelect={Function}
   onRemove={Function}
   minCharacters={Number}
@@ -25,38 +24,49 @@
 ```
 
 ## Parameters
-`label`
-The search label string (default: 'Search')
+### search *(required)*
+**Type:** String
+**Description:** Callback function called when requesting search results for a given query. Should accept one parameter used to execute the search.
 
-`query`
-The search query string (default: '')
+### renderItem *(required)*
+**Type:** Callback `function (item) { ... })`
+**Description:** Callback function that should return JSX. Used to customize the rendering of a result item. The function will be passed the item object which can be used for rendering.
 
-`search`
-Function called when query changes and is >= minCharacters
+### renderSelectedItem *(required)*
+**Type:** Callback `function (item) { ... }`
+**Description:** Callback function that should return JSX. Used to customize the rendering of a selected result item. The function will be passed the selected item object which can be used for rendering.
 
-`results`
-Array of grouped results, used for rendering the listing of result items. See Results Object section for details on expected formatting.
+### label
+**Type:** String
+**Description:** The label of the search field input (default: 'Search')
 
-`renderItem`
-Function returning JSX. Used to customize the rendering of a result item. The function will be passed the item object which can be used for rendering.
+### query
+**Type:** String
+**Description:** The search query string (default: '')
 
-`renderSelectedItem`
-Function returning JSX. Used to customize the rendering of a selected item. The function will be passed the selected item object which can be used for rendering.
+### results
+**Type:** Object (See the [Results Object](#results-object) section)
+**Description:** Array of grouped results, used for rendering the listing of result items.
 
-`onSelect`
-If provided, this callback will be triggered when an item has been selected. The callback will be passed the selected item object.
+### onSelect
+**Type:** Callback `function (item) { ... }`
+**Description:** If provided, this callback will be triggered when an item has been selected. The callback will be passed the selected item object.
 
-`onRemove`
-If provided, this callback will be triggered when an item has been removed. The callback will be passed the removed item object.
+### onRemove
+**Type:** Callback `function (item) { ... }`
+**Description:** If provided, this callback will be triggered when an item has been removed. The callback will be passed the removed item object.
 
-`minCharacters`
-The minimum characters the query should be before triggering the search (default: 3)
+### minCharacters
+**Type:** Number
+**Description:** The minimum characters the query should be before triggering the search (default: 3)
 
-`cache`
-Boolean value to specify whether to leverage caching (default: true)
+### cache
+**Type:** Boolean
+**Description:** Boolean value to specify whether to leverage caching (default: true)
 
-`showGroupHeading`
-Specify whether or not to render the group headings (default: true)
+### showGroupHeading
+**Type:** Boolean
+**Description:** Specify whether or not to render the group headings (default: true)
 
 ## Results Object
 The results are expected to be an array of 0+ groups. Each group should have a `label` that will be used as the group heading in the render (unless `showGroupHeading` is falsy) and an array of `items`, which represent the selectable items within a group.

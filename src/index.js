@@ -103,6 +103,7 @@ class SmartSearch extends React.Component {
     let _results = this._getResults();
     return (
       <div className="smart-search">
+        <label className="ss-label">{this._renderLabel()}</label>
         {this.state.selected.map(item =>
           <div
             className="ss-selected-item"
@@ -111,7 +112,6 @@ class SmartSearch extends React.Component {
             {this._renderSelectedItem(item)}
           </div>
         )}
-        <span className="ss-label">{this._renderLabel()}</span>
         <input
           type="text"
           name="search"
@@ -141,10 +141,10 @@ class SmartSearch extends React.Component {
 }
 
 SmartSearch.propTypes = {
-  query: React.PropTypes.string.isRequired,
+  query: React.PropTypes.string,
   search: React.PropTypes.func.isRequired,
-  renderItem: React.PropTypes.func,
-  renderSelectedItem: React.PropTypes.func,
+  renderItem: React.PropTypes.func.isRequired,
+  renderSelectedItem: React.PropTypes.func.isRequired,
   onSelect: React.PropTypes.func,
   onRemove: React.PropTypes.func,
   results: React.PropTypes.array,
