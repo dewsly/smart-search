@@ -13,6 +13,7 @@
   search={Function}
   renderItem={Function}
   renderSelectedItem={Function}
+  label={String}
   query={String}
   results={Array}
   onSelect={Function}
