@@ -24,58 +24,58 @@
 />
 ```
 
-## Parameters
-### search *(required)*
+## Properties
+### `search` *(required)*
 **Type:** String
 
 **Description:** Callback function called when requesting search results for a given query. Should accept one parameter used to execute the search.
 
-### renderItem *(required)*
+### `renderItem` *(required)*
 **Type:** Callback `function (item) { ... })`
 
 **Description:** Callback function that should return JSX. Used to customize the rendering of a result item. The function will be passed the item object which can be used for rendering.
 
-### renderSelectedItem *(required)*
+### `renderSelectedItem` *(required)*
 **Type:** Callback `function (item) { ... }`
 
 **Description:** Callback function that should return JSX. Used to customize the rendering of a selected result item. The function will be passed the selected item object which can be used for rendering.
 
-### label
+### `label`
 **Type:** String
 
 **Description:** The label of the search field input (default: 'Search')
 
-### query
+### `query`
 **Type:** String
 
 **Description:** The search query string (default: '')
 
-### results
+### `results`
 **Type:** Object (See the [Results Object](#results-object) section)
 
 **Description:** Array of grouped results, used for rendering the listing of result items.
 
-### onSelect
+### `onSelect`
 **Type:** Callback `function (item) { ... }`
 
 **Description:** If provided, this callback will be triggered when an item has been selected. The callback will be passed the selected item object.
 
-### onRemove
+### `onRemove`
 **Type:** Callback `function (item) { ... }`
 
 **Description:** If provided, this callback will be triggered when an item has been removed. The callback will be passed the removed item object.
 
-### minCharacters
+### `minCharacters`
 **Type:** Number
 
 **Description:** The minimum characters the query should be before triggering the search (default: 3)
 
-### cache
+### `cache`
 **Type:** Boolean
 
 **Description:** Boolean value to specify whether to leverage caching (default: true)
 
-### showGroupHeading
+### `showGroupHeading`
 **Type:** Boolean
 
 **Description:** Specify whether or not to render the group headings (default: true)
