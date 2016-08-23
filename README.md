@@ -31,7 +31,7 @@
 **Description:** Callback function called when requesting search results for a given query. Should accept one parameter used to execute the search.
 
 ### `renderItem` *(required)*
-**Type:** Callback `function (item) { ... })`
+**Type:** Callback `function (item) { ... }`
 
 **Description:** Callback function that should return JSX. Used to customize the rendering of a result item. The function will be passed the item object which can be used for rendering.
 
