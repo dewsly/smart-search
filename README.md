@@ -59,12 +59,12 @@
 ### `onSelect`
 **Type:** Callback `function (selectedItem, selectedItems) { ... }`
 
-**Description:** If provided, this callback will be triggered when an item has been selected. The callback will be passed the selected item object.
+**Description:** If provided, this callback will be triggered when an item has been selected. The callback will be passed the selected item object as well as all currently selected items.
 
 ### `onRemove`
 **Type:** Callback `function (removedItem, selectedItems) { ... }`
 
-**Description:** If provided, this callback will be triggered when an item has been removed. The callback will be passed the removed item object.
+**Description:** If provided, this callback will be triggered when an item has been removed. The callback will be passed the removed item object as well as all currently selected items.
 
 ### `minCharacters`
 **Type:** Number
