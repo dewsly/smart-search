@@ -57,12 +57,12 @@
 **Description:** Array of grouped results, used for rendering the listing of result items.
 
 ### `onSelect`
-**Type:** Callback `function (item) { ... }`
+**Type:** Callback `function (selectedItem, selectedItems) { ... }`
 
 **Description:** If provided, this callback will be triggered when an item has been selected. The callback will be passed the selected item object.
 
 ### `onRemove`
-**Type:** Callback `function (item) { ... }`
+**Type:** Callback `function (removedItem, selectedItems) { ... }`
 
 **Description:** If provided, this callback will be triggered when an item has been removed. The callback will be passed the removed item object.
 
