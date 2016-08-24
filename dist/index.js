@@ -150,7 +150,7 @@
           })
         });
         if (this.props.onRemove) {
-          this.props.onRemove(item);
+          this.props.onRemove(item, this.state.selected);
         }
       }
     }, {
@@ -171,12 +171,27 @@
     }, {
       key: '_selectItem',
       value: function _selectItem(item) {
+        var selected = this.state.selected;
+        var removedItem = null;
+
+        if (this.props.multi) {
+          selected = this.state.selected.concat([item]);
+        } else {
+          if (this.state.selected.length) {
+            removedItem = this.state.selected[0];
+          }
+          selected = [item];
+        }
+
         this.setState({
           query: '',
-          selected: this.state.selected.concat([item])
+          selected: selected
         });
+        if (removedItem && this.props.onRemove) {
+          this.props.onRemove(removedItem, this.state.selected);
+        }
         if (this.props.onSelect) {
-          this.props.onSelect(item);
+          this.props.onSelect(item, this.state.selected);
         }
       }
     }, {

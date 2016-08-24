@@ -65,7 +65,7 @@ class SmartSearch extends React.Component {
         return val.id !== item.id;
       })
     });
-    if (this.props.onRemove) { this.props.onRemove(item); }
+    if (this.props.onRemove) { this.props.onRemove(item, this.state.selected); }
   }
 
   _renderItem(item) {
@@ -77,15 +77,32 @@ class SmartSearch extends React.Component {
   }
 
   _renderSelectedItem(item) {
-    return this.props.renderSelectedItem ? this.props.renderSelectedItem(item) : JSON.stringify(item);
+    return this.props.renderSelectedItem
+      ? this.props.renderSelectedItem(item) 
+      : JSON.stringify(item);
   }
 
   _selectItem(item) {
+    let selected = this.state.selected;
+    let removedItem = null;
+
+    if (this.props.multi) {
+      selected = this.state.selected.concat([item]);
+    } else {
+      if (this.state.selected.length) {
+        removedItem = this.state.selected[0];
+      }
+      selected = [item];
+    }
+
     this.setState({
       query: '',
-      selected: this.state.selected.concat([item])
+      selected: selected
     });
-    if (this.props.onSelect) { this.props.onSelect(item); }
+    if (removedItem && this.props.onRemove) {
+      this.props.onRemove(removedItem, this.state.selected);
+    }
+    if (this.props.onSelect) { this.props.onSelect(item, this.state.selected); }
   }
 
   _updateCache() {

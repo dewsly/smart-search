@@ -88,6 +88,21 @@ describe('Shallow Rendering', () => {
     expect(onSelect.calledOnce).to.equal(true);
   });
 
+  it('triggers onSelect and passes selectedItem and selectedItems', () => {
+    const onSelect = sinon.spy();
+
+    const wrapper = shallow(
+      <SmartSearch
+        onSelect={onSelect}
+        results={results} />
+    );
+    wrapper.find('.ss-item').first().simulate('click');
+    expect(onSelect.calledOnce).to.equal(true);
+    expect(onSelect.getCall(0).args.length).to.equal(2);
+    expect(onSelect.getCall(0).args[0]).to.be.an('object');
+    expect(onSelect.getCall(0).args[1]).to.be.an('array');
+  });
+
   it('has one .ss-selected-item after clicking on a result', () => {
     const wrapper = shallow(
       <SmartSearch
@@ -110,6 +125,22 @@ describe('Shallow Rendering', () => {
     expect(onRemove.calledOnce).to.equal(true);
   });
 
+  it('triggers onRemove and passes removedItem and selectedItems', () => {
+    const onRemove = sinon.spy();
+
+    const wrapper = shallow(
+      <SmartSearch
+        onRemove={onRemove}
+        results={results} />
+    );
+    wrapper.find('.ss-item').first().simulate('click');
+    wrapper.find('.ss-selected-item').first().simulate('click');
+    expect(onRemove.calledOnce).to.equal(true);
+    expect(onRemove.getCall(0).args.length).to.equal(2);
+    expect(onRemove.getCall(0).args[0]).to.be.an('object');
+    expect(onRemove.getCall(0).args[1]).to.be.an('array');
+  });
+
   it('renders group heading when showGroupHeading is truthy', () => {
     const wrapper = shallow(
       <SmartSearch
@@ -126,6 +157,36 @@ describe('Shallow Rendering', () => {
         resluts={results} />
     );
     expect(wrapper.find('.ss-group-heading')).to.have.length(0);
+  });
+
+  it('only has one selected item when multi=false', () => {
+    const wrapper = shallow(
+      <SmartSearch
+        results={results}
+        multi={false} />
+    );
+    wrapper.find('.ss-item').first().simulate('click');
+    wrapper.find('.ss-item').last().simulate('click');
+    expect(wrapper.state().selected.length).to.equal(1);
+  });
+
+  it('triggers onRemove when multi=false and previously selected item exists', () => {
+    const onSelect = sinon.spy();
+    const onRemove = sinon.spy();
+
+    const wrapper = shallow(
+      <SmartSearch
+        onSelect={onSelect}
+        onRemove={onRemove}
+        results={results}
+        multi={false} />
+    );
+    wrapper.find('.ss-item').first().simulate('click');
+    wrapper.find('.ss-item').last().simulate('click');
+    expect(onSelect.callCount).to.equal(2);
+    expect(onRemove.calledOnce).to.equal(true);
+    expect(onRemove.getCall(0).args[0]).to.have.property('id');
+    expect(onRemove.getCall(0).args[0].id).to.equal(results[0].items[0].id);
   });
 
 });

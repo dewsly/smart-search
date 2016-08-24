@@ -21,6 +21,7 @@
   minCharacters={Number}
   cache={Boolean}
   showGroupHeading={Boolean}
+  multi={Boolean}
 />
 ```
 
@@ -79,6 +80,10 @@
 **Type:** Boolean
 
 **Description:** Specify whether or not to render the group headings (default: true)
+
+### `multi`
+**Type:** Boolean
+**Description:** Specify whether or not to allow multiple selected items (default: true)
 
 ## Results Array
 The results are expected to be an array of 0+ groups. Each group should have a `label` that will be used as the group heading in the render (unless `showGroupHeading` is falsy) and an array of `items`, which represent the selectable items within a group.
