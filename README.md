@@ -83,6 +83,7 @@
 
 ### `multi`
 **Type:** Boolean
+
 **Description:** Specify whether or not to allow multiple selected items (default: true)
 
 ## Results Array
