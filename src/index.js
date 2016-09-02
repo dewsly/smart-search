@@ -88,9 +88,9 @@ class SmartSearch extends React.Component {
       query: ''
     });
     if (removedItem && this.props.onRemove) {
-      this.props.onRemove(removedItem, this.state.selected);
+      this.props.onRemove(removedItem, selected);
     }
-    if (this.props.onSelect) { this.props.onSelect(item, this.state.selected); }
+    if (this.props.onSelect) { this.props.onSelect(item, selected); }
   }
 
   render() {
