@@ -98,7 +98,9 @@
     _createClass(SmartSearch, [{
       key: 'componentDidUpdate',
       value: function componentDidUpdate(prevProps, prevState) {
-        this._onQueryChange(this.state.query);
+        if (prevState.query !== this.state.query) {
+          this._onQueryChange(this.state.query);
+        }
       }
     }, {
       key: 'componentWillReceiveProps',
@@ -218,7 +220,7 @@
           _react2.default.createElement('input', {
             type: 'text',
             name: 'search',
-            value: this.state.query,
+            defaultValue: this.props.query,
             onChange: function onChange(e) {
               _this2._handleChange(e);
             } }),
@@ -259,6 +261,7 @@
   }(_react2.default.Component);
 
   SmartSearch.propTypes = {
+    label: _react2.default.PropTypes.string,
     query: _react2.default.PropTypes.string,
     search: _react2.default.PropTypes.func.isRequired,
     renderItem: _react2.default.PropTypes.func.isRequired,

@@ -18,7 +18,9 @@ class SmartSearch extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    this._onQueryChange(this.state.query);
+    if (prevState.query !== this.state.query) {
+      this._onQueryChange(this.state.query);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -38,7 +40,6 @@ class SmartSearch extends React.Component {
       this.setState({
         query: event.target.value
       });
-
     }
   }
 
@@ -116,7 +117,7 @@ class SmartSearch extends React.Component {
         <input
           type="text"
           name="search"
-          value={this.state.query}
+          defaultValue={this.props.query}
           onChange={(e) => { this._handleChange(e); }} />
         <div className="ss-results">
           {_results && _results.map(results =>
@@ -143,6 +144,7 @@ class SmartSearch extends React.Component {
 }
 
 SmartSearch.propTypes = {
+  label: React.PropTypes.string,
   query: React.PropTypes.string,
   search: React.PropTypes.func.isRequired,
   renderItem: React.PropTypes.func.isRequired,
