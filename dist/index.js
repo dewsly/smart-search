@@ -96,19 +96,13 @@
     }
 
     _createClass(SmartSearch, [{
-      key: 'componentDidUpdate',
-      value: function componentDidUpdate(prevProps, prevState) {
-        if (prevState.query !== this.state.query) {
-          this._onQueryChange(this.state.query);
-        }
-      }
-    }, {
       key: 'componentWillReceiveProps',
       value: function componentWillReceiveProps(nextProps) {
         if (nextProps.query !== this.props.query) {
           this.setState({
             query: nextProps.query
           });
+          this._onQueryChange(nextProps.query);
         }
       }
     }, {
@@ -123,6 +117,7 @@
           this.setState({
             query: event.target.value
           });
+          this._onQueryChange(event.target.value);
         }
       }
     }, {

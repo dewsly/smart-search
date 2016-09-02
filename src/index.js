@@ -17,17 +17,12 @@ class SmartSearch extends React.Component {
     this._removeItem = this._removeItem.bind(this);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.query !== this.state.query) {
-      this._onQueryChange(this.state.query);
-    }
-  }
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.query !== this.props.query) {
       this.setState({
         query: nextProps.query
       });
+      this._onQueryChange(nextProps.query);
     }
   }
 
@@ -40,6 +35,7 @@ class SmartSearch extends React.Component {
       this.setState({
         query: event.target.value
       });
+      this._onQueryChange(event.target.value);
     }
   }
 
