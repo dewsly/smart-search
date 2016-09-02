@@ -79,7 +79,7 @@
     function SmartSearch(props) {
       _classCallCheck(this, SmartSearch);
 
-      var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SmartSearch).call(this, props));
+      var _this = _possibleConstructorReturn(this, (SmartSearch.__proto__ || Object.getPrototypeOf(SmartSearch)).call(this, props));
 
       /**
        * @type {object}
