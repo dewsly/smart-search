@@ -40,6 +40,10 @@ class SmartSearch extends React.Component {
     return this.state.cachedResults[this.state.query] || this.props.results;
   }
 
+  _handleChange(event) {
+    this.setState({query: event.target.value});
+  }
+
   _onQueryChange(query) {
     // determine if query value length is >= props.minCharacters
     if (!query || query.length < this.props.minCharacters) {
@@ -78,7 +82,7 @@ class SmartSearch extends React.Component {
 
   _renderSelectedItem(item) {
     return this.props.renderSelectedItem
-      ? this.props.renderSelectedItem(item) 
+      ? this.props.renderSelectedItem(item)
       : JSON.stringify(item);
   }
 
@@ -125,7 +129,8 @@ class SmartSearch extends React.Component {
           <div
             className="ss-selected-item"
             key={item.id}
-            onClick={() => {this._removeItem(item)}}>
+            onClick={() => {this._removeItem(item)}}
+            onChange={this._handleChange}>
             {this._renderSelectedItem(item)}
           </div>
         )}
