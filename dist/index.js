@@ -85,14 +85,10 @@
        * @type {object}
        * @property {string} query search query
        * @property {array} selected array of selected items
-       * @property {object} cache object map of query -> results
-       * @property {object} cachedResults array of results to use when caching enabled
        */
       _this.state = {
         query: '',
-        selected: [],
-        cache: {},
-        cachedResults: []
+        selected: []
       };
       _this._selectItem = _this._selectItem.bind(_this);
       _this._removeItem = _this._removeItem.bind(_this);
@@ -102,9 +98,7 @@
     _createClass(SmartSearch, [{
       key: 'componentDidUpdate',
       value: function componentDidUpdate(prevProps, prevState) {
-        if (this.props.cache) {
-          this._updateCache();
-        }
+        this._onQueryChange(this.state.query);
       }
     }, {
       key: 'componentWillReceiveProps',
@@ -113,18 +107,21 @@
           this.setState({
             query: nextProps.query
           });
-          this._onQueryChange(nextProps.query);
         }
       }
     }, {
       key: '_getResults',
       value: function _getResults() {
-        return this.state.cachedResults[this.state.query] || this.props.results;
+        return this.props.results;
       }
     }, {
       key: '_handleChange',
       value: function _handleChange(event) {
-        this.setState({ query: event.target.value });
+        if (event.target.value !== this.state.query) {
+          this.setState({
+            query: event.target.value
+          });
+        }
       }
     }, {
       key: '_onQueryChange',
@@ -134,13 +131,6 @@
           return;
         }
 
-        if (this.props.cache && this.state.cache[query]) {
-          // set results to value of cache
-          this.setState({
-            cachedResults: this.state.cache[query]
-          });
-          return;
-        }
         // execute search action with search value:
         if (this.props.search) {
           this.props.search(query);
@@ -200,18 +190,6 @@
         }
       }
     }, {
-      key: '_updateCache',
-      value: function _updateCache() {
-        if (!this.state || this.state.cache[this.state.query]) {
-          return;
-        }
-        var cache = this.state.cache;
-        cache[this.state.query] = this.props.results;
-        this.setState({
-          cache: cache
-        });
-      }
-    }, {
       key: 'render',
       value: function render() {
         var _this2 = this;
@@ -233,15 +211,17 @@
                 key: item.id,
                 onClick: function onClick() {
                   _this2._removeItem(item);
-                },
-                onChange: _this2._handleChange },
+                } },
               _this2._renderSelectedItem(item)
             );
           }),
           _react2.default.createElement('input', {
             type: 'text',
             name: 'search',
-            value: this.state.query }),
+            value: this.state.query,
+            onChange: function onChange(e) {
+              _this2._handleChange(e);
+            } }),
           _react2.default.createElement(
             'div',
             { className: 'ss-results' },
@@ -286,13 +266,11 @@
     onSelect: _react2.default.PropTypes.func,
     onRemove: _react2.default.PropTypes.func,
     results: _react2.default.PropTypes.array,
-    cache: _react2.default.PropTypes.bool,
     minCharacters: _react2.default.PropTypes.number,
     showGroupHeading: _react2.default.PropTypes.bool
   };
   SmartSearch.defaultProps = {
     query: '',
-    cache: true,
     minCharacters: 3,
     showGroupHeading: true
   };

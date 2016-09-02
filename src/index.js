@@ -8,23 +8,17 @@ class SmartSearch extends React.Component {
      * @type {object}
      * @property {string} query search query
      * @property {array} selected array of selected items
-     * @property {object} cache object map of query -> results
-     * @property {object} cachedResults array of results to use when caching enabled
      */
     this.state = {
       query: '',
-      selected: [],
-      cache: {},
-      cachedResults: []
+      selected: []
     };
     this._selectItem = this._selectItem.bind(this);
     this._removeItem = this._removeItem.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.cache) {
-      this._updateCache();
-    }
+    this._onQueryChange(this.state.query);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -32,16 +26,20 @@ class SmartSearch extends React.Component {
       this.setState({
         query: nextProps.query
       });
-      this._onQueryChange(nextProps.query);
     }
   }
 
   _getResults() {
-    return this.state.cachedResults[this.state.query] || this.props.results;
+    return this.props.results;
   }
 
   _handleChange(event) {
-    this.setState({query: event.target.value});
+    if (event.target.value !== this.state.query) {
+      this.setState({
+        query: event.target.value
+      });
+
+    }
   }
 
   _onQueryChange(query) {
@@ -50,13 +48,6 @@ class SmartSearch extends React.Component {
       return;
     }
 
-    if (this.props.cache && this.state.cache[query]) {
-      // set results to value of cache
-      this.setState({
-        cachedResults: this.state.cache[query]
-      });
-      return;
-    }
     // execute search action with search value:
     if (this.props.search) {
       this.props.search(query);
@@ -109,17 +100,6 @@ class SmartSearch extends React.Component {
     if (this.props.onSelect) { this.props.onSelect(item, this.state.selected); }
   }
 
-  _updateCache() {
-    if (!this.state || this.state.cache[this.state.query]) {
-      return;
-    }
-    let cache = this.state.cache;
-    cache[this.state.query] = this.props.results;
-    this.setState({
-      cache: cache
-    });
-  }
-
   render() {
     let _results = this._getResults();
     return (
@@ -129,15 +109,15 @@ class SmartSearch extends React.Component {
           <div
             className="ss-selected-item"
             key={item.id}
-            onClick={() => {this._removeItem(item)}}
-            onChange={this._handleChange}>
+            onClick={() => {this._removeItem(item)}}>
             {this._renderSelectedItem(item)}
           </div>
         )}
         <input
           type="text"
           name="search"
-          value={this.state.query} />
+          value={this.state.query}
+          onChange={(e) => { this._handleChange(e); }} />
         <div className="ss-results">
           {_results && _results.map(results =>
             <div
@@ -170,13 +150,11 @@ SmartSearch.propTypes = {
   onSelect: React.PropTypes.func,
   onRemove: React.PropTypes.func,
   results: React.PropTypes.array,
-  cache: React.PropTypes.bool,
   minCharacters: React.PropTypes.number,
   showGroupHeading: React.PropTypes.bool
 };
 SmartSearch.defaultProps = {
   query: '',
-  cache: true,
   minCharacters: 3,
   showGroupHeading: true
 };

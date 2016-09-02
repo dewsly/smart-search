@@ -19,7 +19,6 @@
   onSelect={Function}
   onRemove={Function}
   minCharacters={Number}
-  cache={Boolean}
   showGroupHeading={Boolean}
   multi={Boolean}
 />
@@ -70,11 +69,6 @@
 **Type:** Number
 
 **Description:** The minimum characters the query should be before triggering the search (default: 3)
-
-### `cache`
-**Type:** Boolean
-
-**Description:** Boolean value to specify whether to leverage caching (default: true)
 
 ### `showGroupHeading`
 **Type:** Boolean

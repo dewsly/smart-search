@@ -188,7 +188,6 @@ describe('Shallow Rendering', () => {
     expect(onRemove.getCall(0).args[0]).to.have.property('id');
     expect(onRemove.getCall(0).args[0].id).to.equal(results[0].items[0].id);
   });
-
 });
 
 // Full DOM Rendering
@@ -252,36 +251,11 @@ describe('Full DOM Rendering', () => {
     expect(search.calledOnce).to.equal(true);
   });
 
-  it('should not trigger props.search when searching for a cached query', () => {
-    const search = sinon.spy();
-
-    const wrapper = mount(<SmartSearch cache={true} search={search} query='' results={noresults} />);
-    expect(wrapper.props().query).to.equal('');
-
-    wrapper.setProps({ query: 'search', results:results });
-    expect(wrapper.props().query).to.equal('search');
-    wrapper.setProps({ query: 'se', results: noresults });
-    expect(wrapper.props().query).to.equal('se');
-    wrapper.setProps({ query: 'search', results: results });
-    expect(wrapper.props().query).to.equal('search');
-
-    expect(search.callCount).to.equal(1);
-  });
-
-  it('should trigger props.search multiple times when cache disabled', () => {
-    const search = sinon.spy();
-
-    const wrapper = mount(<SmartSearch cache={false} search={search} query='' results={noresults} />);
-    expect(wrapper.props().query).to.equal('');
-
-    wrapper.setProps({ query: 'searc', results:results });
-    expect(wrapper.props().query).to.equal('searc');
-    wrapper.setProps({ query: 'search', results: noresults });
-    expect(wrapper.props().query).to.equal('search');
-    wrapper.setProps({ query: 'searc', results: results });
-    expect(wrapper.props().query).to.equal('searc');
-
-    expect(search.callCount).to.equal(3);
+  it('should update query state when input field value changes', () => {
+    const wrapper = mount(<SmartSearch query='' />);
+    expect(wrapper.state().query).to.equal('');
+    let input = wrapper.find('input').simulate('change', { target: {value:'test'} });
+    expect(wrapper.state().query).to.equal('test');
   });
 
 });
