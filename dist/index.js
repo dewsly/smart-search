@@ -85,10 +85,12 @@
        * @type {object}
        * @property {array} selected array of selected items
        * @property {string} query search string
+       * @property {bool} focused boolean indicating whether input is focused
        */
       _this.state = {
         selected: [],
-        query: _this.props.query
+        query: _this.props.query,
+        focused: false
       };
       _this._selectItem = _this._selectItem.bind(_this);
       _this._removeItem = _this._removeItem.bind(_this);
@@ -103,6 +105,18 @@
         }
       }
     }, {
+      key: '_getComponentClass',
+      value: function _getComponentClass() {
+        var className = 'Select smart-search';
+        if (this.state.focused) {
+          className += ' is-focused is-open';
+        }
+        if (!this.state.query) {
+          className += ' is-empty';
+        }
+        return className;
+      }
+    }, {
       key: '_getResults',
       value: function _getResults() {
         return this.props.results;
@@ -111,6 +125,20 @@
       key: '_handleChange',
       value: function _handleChange(event) {
         this._onQueryChange(event.target.value);
+      }
+    }, {
+      key: '_onBlur',
+      value: function _onBlur() {
+        this.setState({
+          focused: false
+        });
+      }
+    }, {
+      key: '_onFocus',
+      value: function _onFocus() {
+        this.setState({
+          focused: true
+        });
       }
     }, {
       key: '_onQueryChange',
@@ -176,10 +204,10 @@
           query: ''
         });
         if (removedItem && this.props.onRemove) {
-          this.props.onRemove(removedItem, this.state.selected);
+          this.props.onRemove(removedItem, selected);
         }
         if (this.props.onSelect) {
-          this.props.onSelect(item, this.state.selected);
+          this.props.onSelect(item, selected);
         }
       }
     }, {
@@ -190,59 +218,73 @@
         var _results = this._getResults();
         return _react2.default.createElement(
           'div',
-          { className: 'smart-search' },
-          _react2.default.createElement(
-            'label',
-            { className: 'ss-label' },
-            this._renderLabel()
-          ),
-          this.state.selected.map(function (item, i) {
-            return _react2.default.createElement(
-              'div',
-              {
-                className: 'ss-selected-item',
-                key: i,
-                onClick: function onClick() {
-                  _this2._removeItem(item);
-                } },
-              _this2._renderSelectedItem(item)
-            );
-          }),
-          _react2.default.createElement('input', {
-            type: 'text',
-            name: 'search',
-            value: this.state.query,
-            onChange: function onChange(e) {
-              _this2._handleChange(e);
-            } }),
+          { className: this._getComponentClass() },
           _react2.default.createElement(
             'div',
-            { className: 'ss-results' },
-            _results && _results.map(function (results, i) {
+            { className: 'Select-control' },
+            _react2.default.createElement(
+              'label',
+              { className: 'ss-label' },
+              this._renderLabel()
+            ),
+            this.state.selected.map(function (item, i) {
               return _react2.default.createElement(
                 'div',
                 {
-                  className: 'ss-group',
-                  key: i },
-                _this2.props.showGroupHeading ? _react2.default.createElement(
-                  'h3',
-                  { className: 'ss-group-heading' },
-                  results.label
-                ) : '',
-                results.items && results.items.map(function (result, j) {
-                  return _react2.default.createElement(
-                    'div',
-                    {
-                      className: 'ss-item',
-                      key: j,
-                      onClick: function onClick() {
-                        _this2._selectItem(result);
-                      } },
-                    _this2._renderItem(result)
-                  );
-                })
+                  className: 'ss-selected-item',
+                  key: i,
+                  onClick: function onClick() {
+                    _this2._removeItem(item);
+                  } },
+                _this2._renderSelectedItem(item)
               );
-            })
+            }),
+            _react2.default.createElement(
+              'div',
+              { className: 'Select-input' },
+              _react2.default.createElement('input', {
+                type: 'text',
+                name: 'search',
+                value: this.state.query,
+                onChange: function onChange(e) {
+                  _this2._handleChange(e);
+                },
+                onFocus: function onFocus() {
+                  _this2._onFocus();
+                },
+                onBlur: function onBlur() {
+                  _this2._onBlur();
+                } })
+            ),
+            _react2.default.createElement(
+              'div',
+              { className: 'Select-menu-outer ss-results' },
+              _results && _results.map(function (results, i) {
+                return _react2.default.createElement(
+                  'div',
+                  {
+                    className: 'ss-group',
+                    key: i },
+                  _this2.props.showGroupHeading ? _react2.default.createElement(
+                    'h3',
+                    { className: 'ss-group-heading' },
+                    results.label
+                  ) : '',
+                  results.items && results.items.map(function (result, j) {
+                    return _react2.default.createElement(
+                      'div',
+                      {
+                        className: 'ss-item',
+                        key: j,
+                        onClick: function onClick() {
+                          _this2._selectItem(result);
+                        } },
+                      _this2._renderItem(result)
+                    );
+                  })
+                );
+              })
+            )
           )
         );
       }

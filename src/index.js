@@ -8,10 +8,12 @@ class SmartSearch extends React.Component {
      * @type {object}
      * @property {array} selected array of selected items
      * @property {string} query search string
+     * @property {bool} focused boolean indicating whether input is focused
      */
     this.state = {
       selected: [],
-      query: this.props.query
+      query: this.props.query,
+      focused: false
     };
     this._selectItem = this._selectItem.bind(this);
     this._removeItem = this._removeItem.bind(this);
@@ -23,12 +25,35 @@ class SmartSearch extends React.Component {
     }
   }
 
+  _getComponentClass() {
+    let className = 'Select smart-search';
+    if (this.state.focused) {
+      className += ' is-focused is-open';
+    }
+    if (!this.state.query) {
+      className += ' is-empty';
+    }
+    return className;
+  }
+
   _getResults() {
     return this.props.results;
   }
 
   _handleChange(event) {
     this._onQueryChange(event.target.value);
+  }
+
+  _onBlur() {
+    this.setState({
+      focused: false
+    });
+  }
+
+  _onFocus() {
+    this.setState({
+      focused: true
+    });
   }
 
   _onQueryChange(query) {
@@ -96,22 +121,28 @@ class SmartSearch extends React.Component {
   render() {
     let _results = this._getResults();
     return (
-      <div className="smart-search">
-        <label className="ss-label">{this._renderLabel()}</label>
-        {this.state.selected.map((item, i) =>
-          <div
-            className="ss-selected-item"
-            key={i}
-            onClick={() => {this._removeItem(item)}}>
-            {this._renderSelectedItem(item)}
+      <div className={this._getComponentClass()}>
+        <div className="Select-control">
+          <label className="ss-label">{this._renderLabel()}</label>
+          {this.state.selected.map((item, i) =>
+            <div
+              className="ss-selected-item"
+              key={i}
+              onClick={() => {this._removeItem(item)}}>
+              {this._renderSelectedItem(item)}
+            </div>
+          )}
+          <div className="Select-input">
+            <input
+              type="text"
+              name="search"
+              value={this.state.query}
+              onChange={(e) => { this._handleChange(e); }}
+              onFocus={() => { this._onFocus(); }}
+              onBlur={() => { this._onBlur(); }} />
           </div>
-        )}
-        <input
-          type="text"
-          name="search"
-          value={this.state.query}
-          onChange={(e) => { this._handleChange(e); }} />
-        <div className="ss-results">
+        </div>
+        <div className="Select-menu-outer ss-results">
           {_results && _results.map((results, i) =>
             <div
               className="ss-group"
