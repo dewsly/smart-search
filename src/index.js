@@ -91,10 +91,10 @@ class SmartSearch extends React.Component {
     return (
       <div className="smart-search">
         <label className="ss-label">{this._renderLabel()}</label>
-        {this.state.selected.map(item =>
+        {this.state.selected.map((item, i) =>
           <div
             className="ss-selected-item"
-            key={item.id}
+            key={i}
             onClick={() => {this._removeItem(item)}}>
             {this._renderSelectedItem(item)}
           </div>

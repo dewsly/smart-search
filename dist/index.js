@@ -189,12 +189,12 @@
             { className: 'ss-label' },
             this._renderLabel()
           ),
-          this.state.selected.map(function (item) {
+          this.state.selected.map(function (item, i) {
             return _react2.default.createElement(
               'div',
               {
                 className: 'ss-selected-item',
-                key: item.id,
+                key: i,
                 onClick: function onClick() {
                   _this2._removeItem(item);
                 } },
