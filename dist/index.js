@@ -122,6 +122,11 @@
         return this.state.cachedResults[this.state.query] || this.props.results;
       }
     }, {
+      key: '_handleChange',
+      value: function _handleChange(event) {
+        this.setState({ query: event.target.value });
+      }
+    }, {
       key: '_onQueryChange',
       value: function _onQueryChange(query) {
         // determine if query value length is >= props.minCharacters
@@ -228,7 +233,8 @@
                 key: item.id,
                 onClick: function onClick() {
                   _this2._removeItem(item);
-                } },
+                },
+                onChange: _this2._handleChange },
               _this2._renderSelectedItem(item)
             );
           }),
