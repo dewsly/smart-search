@@ -83,11 +83,9 @@
 
       /**
        * @type {object}
-       * @property {string} query search query
        * @property {array} selected array of selected items
        */
       _this.state = {
-        query: '',
         selected: []
       };
       _this._selectItem = _this._selectItem.bind(_this);
@@ -99,9 +97,6 @@
       key: 'componentWillReceiveProps',
       value: function componentWillReceiveProps(nextProps) {
         if (nextProps.query !== this.props.query) {
-          this.setState({
-            query: nextProps.query
-          });
           this._onQueryChange(nextProps.query);
         }
       }
@@ -113,12 +108,7 @@
     }, {
       key: '_handleChange',
       value: function _handleChange(event) {
-        if (event.target.value !== this.state.query) {
-          this.setState({
-            query: event.target.value
-          });
-          this._onQueryChange(event.target.value);
-        }
+        this._onQueryChange(event.target.value);
       }
     }, {
       key: '_onQueryChange',
@@ -176,7 +166,6 @@
         }
 
         this.setState({
-          query: '',
           selected: selected
         });
         if (removedItem && this.props.onRemove) {
@@ -222,23 +211,23 @@
           _react2.default.createElement(
             'div',
             { className: 'ss-results' },
-            _results && _results.map(function (results) {
+            _results && _results.map(function (results, i) {
               return _react2.default.createElement(
                 'div',
                 {
                   className: 'ss-group',
-                  key: results.key },
+                  key: i },
                 _this2.props.showGroupHeading ? _react2.default.createElement(
                   'h3',
                   { className: 'ss-group-heading' },
                   results.label
                 ) : '',
-                results.items.map(function (result) {
+                results.items && results.items.map(function (result, j) {
                   return _react2.default.createElement(
                     'div',
                     {
                       className: 'ss-item',
-                      key: result.id,
+                      key: j,
                       onClick: function onClick() {
                         _this2._selectItem(result);
                       } },

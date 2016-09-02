@@ -6,11 +6,9 @@ class SmartSearch extends React.Component {
     super(props);
     /**
      * @type {object}
-     * @property {string} query search query
      * @property {array} selected array of selected items
      */
     this.state = {
-      query: '',
       selected: []
     };
     this._selectItem = this._selectItem.bind(this);
@@ -19,9 +17,6 @@ class SmartSearch extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.query !== this.props.query) {
-      this.setState({
-        query: nextProps.query
-      });
       this._onQueryChange(nextProps.query);
     }
   }
@@ -31,12 +26,7 @@ class SmartSearch extends React.Component {
   }
 
   _handleChange(event) {
-    if (event.target.value !== this.state.query) {
-      this.setState({
-        query: event.target.value
-      });
-      this._onQueryChange(event.target.value);
-    }
+    this._onQueryChange(event.target.value);
   }
 
   _onQueryChange(query) {
@@ -88,7 +78,6 @@ class SmartSearch extends React.Component {
     }
 
     this.setState({
-      query: '',
       selected: selected
     });
     if (removedItem && this.props.onRemove) {
@@ -116,16 +105,16 @@ class SmartSearch extends React.Component {
           defaultValue={this.props.query}
           onChange={(e) => { this._handleChange(e); }} />
         <div className="ss-results">
-          {_results && _results.map(results =>
+          {_results && _results.map((results, i) =>
             <div
               className="ss-group"
-              key={results.key}>
+              key={i}>
               {this.props.showGroupHeading ?
                 <h3 className="ss-group-heading">{results.label}</h3> : '' }
-              {results.items.map(result =>
+              {results.items && results.items.map((result, j) =>
                 <div
                   className="ss-item"
-                  key={result.id}
+                  key={j}
                   onClick={() => {this._selectItem(result)}}>
                   {this._renderItem(result)}
                 </div>

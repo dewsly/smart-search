@@ -251,11 +251,12 @@ describe('Full DOM Rendering', () => {
     expect(search.calledOnce).to.equal(true);
   });
 
-  it('should update query state when input field value changes', () => {
-    const wrapper = mount(<SmartSearch query='' />);
-    expect(wrapper.state().query).to.equal('');
-    let input = wrapper.find('input').simulate('change', { target: {value:'test'} });
-    expect(wrapper.state().query).to.equal('test');
+  it('should trigger props.search when input field value changes', () => {
+    const search = sinon.spy();
+    const wrapper = mount(<SmartSearch query='' search={search} />);
+    expect(wrapper.props().query).to.equal('');
+    wrapper.find('input').simulate('change', { target: {value:'test'} });
+    expect(search.calledOnce).to.equal(true);
   });
 
 });
