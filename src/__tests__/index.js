@@ -112,6 +112,17 @@ describe('Shallow Rendering', () => {
     expect(wrapper.find('.ss-selected-item')).to.have.length(1);
   });
 
+  it('has one .ss-selected-item after clicking on the same result', () => {
+    const wrapper = shallow(
+      <SmartSearch
+        results={results} />
+    );
+    wrapper.find('.ss-item').first().simulate('click');
+    expect(wrapper.find('.ss-selected-item')).to.have.length(1);
+    wrapper.find('.ss-item').first().simulate('click');
+    expect(wrapper.find('.ss-selected-item')).to.have.length(1);
+  });
+
   it('clears query state after clicking on a result', () => {
     const wrapper = shallow(
       <SmartSearch

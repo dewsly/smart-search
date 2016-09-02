@@ -114,6 +114,9 @@
         if (!this.state.query) {
           className += ' is-empty';
         }
+        if (this.state.selected.length) {
+          className += ' has-value';
+        }
         return className;
       }
     }, {
@@ -191,7 +194,13 @@
         var removedItem = null;
 
         if (this.props.multi) {
-          selected = this.state.selected.concat([item]);
+          var alreadyExists = this.state.selected.reduce(function (previous, current) {
+            console.log(previous, current.id, item.id);
+            return previous || current.id == item.id;
+          }, false);
+          if (!alreadyExists) {
+            selected = this.state.selected.concat([item]);
+          }
         } else {
           if (this.state.selected.length) {
             removedItem = this.state.selected[0];
@@ -255,36 +264,36 @@
                 onBlur: function onBlur() {
                   _this2._onBlur();
                 } })
-            ),
-            _react2.default.createElement(
-              'div',
-              { className: 'Select-menu-outer ss-results' },
-              _results && _results.map(function (results, i) {
-                return _react2.default.createElement(
-                  'div',
-                  {
-                    className: 'ss-group',
-                    key: i },
-                  _this2.props.showGroupHeading ? _react2.default.createElement(
-                    'h3',
-                    { className: 'ss-group-heading' },
-                    results.label
-                  ) : '',
-                  results.items && results.items.map(function (result, j) {
-                    return _react2.default.createElement(
-                      'div',
-                      {
-                        className: 'ss-item',
-                        key: j,
-                        onClick: function onClick() {
-                          _this2._selectItem(result);
-                        } },
-                      _this2._renderItem(result)
-                    );
-                  })
-                );
-              })
             )
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'Select-menu-outer ss-results' },
+            _results && _results.map(function (results, i) {
+              return _react2.default.createElement(
+                'div',
+                {
+                  className: 'ss-group',
+                  key: i },
+                _this2.props.showGroupHeading ? _react2.default.createElement(
+                  'h3',
+                  { className: 'ss-group-heading' },
+                  results.label
+                ) : '',
+                results.items && results.items.map(function (result, j) {
+                  return _react2.default.createElement(
+                    'div',
+                    {
+                      className: 'ss-item',
+                      key: j,
+                      onClick: function onClick() {
+                        _this2._selectItem(result);
+                      } },
+                    _this2._renderItem(result)
+                  );
+                })
+              );
+            })
           )
         );
       }

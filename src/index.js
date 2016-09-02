@@ -33,6 +33,9 @@ class SmartSearch extends React.Component {
     if (!this.state.query) {
       className += ' is-empty';
     }
+    if (this.state.selected.length) {
+      className += ' has-value';
+    }
     return className;
   }
 
@@ -100,7 +103,12 @@ class SmartSearch extends React.Component {
     let removedItem = null;
 
     if (this.props.multi) {
-      selected = this.state.selected.concat([item]);
+      let alreadyExists = this.state.selected.reduce((previous, current) => {
+        return previous || current.id == item.id;
+      }, false);
+      if (!alreadyExists) {
+        selected = this.state.selected.concat([item]);
+      }
     } else {
       if (this.state.selected.length) {
         removedItem = this.state.selected[0];
