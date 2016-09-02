@@ -84,9 +84,11 @@
       /**
        * @type {object}
        * @property {array} selected array of selected items
+       * @property {string} query search string
        */
       _this.state = {
-        selected: []
+        selected: [],
+        query: _this.props.query
       };
       _this._selectItem = _this._selectItem.bind(_this);
       _this._removeItem = _this._removeItem.bind(_this);
@@ -113,6 +115,10 @@
     }, {
       key: '_onQueryChange',
       value: function _onQueryChange(query) {
+        this.setState({
+          query: query
+        });
+
         // determine if query value length is >= props.minCharacters
         if (!query || query.length < this.props.minCharacters) {
           return;
@@ -204,7 +210,7 @@
           _react2.default.createElement('input', {
             type: 'text',
             name: 'search',
-            defaultValue: this.props.query,
+            value: this.state.query,
             onChange: function onChange(e) {
               _this2._handleChange(e);
             } }),

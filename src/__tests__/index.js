@@ -112,6 +112,17 @@ describe('Shallow Rendering', () => {
     expect(wrapper.find('.ss-selected-item')).to.have.length(1);
   });
 
+  it('clears query state after clicking on a result', () => {
+    const wrapper = shallow(
+      <SmartSearch
+        query="Something"
+        results={results} />
+    );
+    expect(wrapper.state().query).to.equal('Something');
+    wrapper.find('.ss-item').first().simulate('click');
+    expect(wrapper.state().query).to.equal('');
+  });
+
   it('triggers onRemove when selected item has been removed', () => {
     const onRemove = sinon.spy();
 
@@ -251,12 +262,11 @@ describe('Full DOM Rendering', () => {
     expect(search.calledOnce).to.equal(true);
   });
 
-  it('should trigger props.search when input field value changes', () => {
-    const search = sinon.spy();
-    const wrapper = mount(<SmartSearch query='' search={search} />);
-    expect(wrapper.props().query).to.equal('');
-    wrapper.find('input').simulate('change', { target: {value:'test'} });
-    expect(search.calledOnce).to.equal(true);
+  it('should update query state when input field value changes', () => {
+    const wrapper = mount(<SmartSearch query='' />);
+    expect(wrapper.state().query).to.equal('');
+    let input = wrapper.find('input').simulate('change', { target: {value:'test'} });
+    expect(wrapper.state().query).to.equal('test');
   });
 
 });

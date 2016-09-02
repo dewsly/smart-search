@@ -7,9 +7,11 @@ class SmartSearch extends React.Component {
     /**
      * @type {object}
      * @property {array} selected array of selected items
+     * @property {string} query search string
      */
     this.state = {
-      selected: []
+      selected: [],
+      query: this.props.query
     };
     this._selectItem = this._selectItem.bind(this);
     this._removeItem = this._removeItem.bind(this);
@@ -30,6 +32,10 @@ class SmartSearch extends React.Component {
   }
 
   _onQueryChange(query) {
+    this.setState({
+      query: query
+    });
+
     // determine if query value length is >= props.minCharacters
     if (!query || query.length < this.props.minCharacters) {
       return;
@@ -78,7 +84,8 @@ class SmartSearch extends React.Component {
     }
 
     this.setState({
-      selected: selected
+      selected: selected,
+      query: ''
     });
     if (removedItem && this.props.onRemove) {
       this.props.onRemove(removedItem, this.state.selected);
@@ -102,7 +109,7 @@ class SmartSearch extends React.Component {
         <input
           type="text"
           name="search"
-          defaultValue={this.props.query}
+          value={this.state.query}
           onChange={(e) => { this._handleChange(e); }} />
         <div className="ss-results">
           {_results && _results.map((results, i) =>
