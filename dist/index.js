@@ -172,7 +172,8 @@
         }
 
         this.setState({
-          selected: selected
+          selected: selected,
+          query: ''
         });
         if (removedItem && this.props.onRemove) {
           this.props.onRemove(removedItem, this.state.selected);
