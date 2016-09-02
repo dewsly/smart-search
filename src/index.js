@@ -9,11 +9,13 @@ class SmartSearch extends React.Component {
      * @property {array} selected array of selected items
      * @property {string} query search string
      * @property {bool} focused boolean indicating whether input is focused
+     * @property {int} highlightIndex int indicate which result should be highlighted
      */
     this.state = {
       selected: [],
       query: this.props.query,
-      focused: false
+      focused: false,
+      highlightIndex: 0
     };
     this._selectItem = this._selectItem.bind(this);
     this._removeItem = this._removeItem.bind(this);
@@ -39,12 +41,48 @@ class SmartSearch extends React.Component {
     return className;
   }
 
+  _getItemClass(index) {
+    let className = "Select-option ss-item";
+    if (this.state.highlightIndex == index) {
+      className += " active";
+    }
+    return className;
+  }
+
   _getResults() {
     return this.props.results;
   }
 
+  _getResultCount() {
+    return this._getResults().reduce((previous, current) => {
+      return previous + current.items.length;
+    }, 0);
+  }
+
   _handleChange(event) {
     this._onQueryChange(event.target.value);
+  }
+
+  _highlightNextResult() {
+    let index = this.state.highlightIndex;
+    if (this._getResultCount() <= (index + 1)) {
+      index = -1;
+    }
+    console.log(index+1);
+    this.setState({
+      highlightIndex: index + 1
+    });
+  }
+
+  _highlightPreviousResult() {
+    let index = this.state.highlightIndex;
+    if ((index-1) < 0) {
+      index = this._getResultCount();
+    }
+    console.log(index-1);
+    this.setState({
+      highlightIndex: index - 1
+    });
   }
 
   _onBlur() {
@@ -57,6 +95,38 @@ class SmartSearch extends React.Component {
     this.setState({
       focused: true
     });
+  }
+
+  _onKeyDown(e) {
+    let stop = false;
+
+    switch(e.which) {
+      case 8:
+        if (!this.state.query && this.state.selected.length) {
+          this._removeItem(this.state.selected[this.state.selected.length-1]);
+        }
+        break;
+      case 38:
+        // up
+        stop = true;
+        this._highlightPreviousResult();
+        break;
+      case 40:
+        // down
+        stop = true;
+        this._highlightNextResult();
+        break;
+      case 13:
+      case 176:
+        // enter / numpad enter
+        stop = true;
+        this._selectHighlighted();
+        break;
+    }
+    if (stop) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
   }
 
   _onQueryChange(query) {
@@ -96,6 +166,27 @@ class SmartSearch extends React.Component {
     return this.props.renderSelectedItem
       ? this.props.renderSelectedItem(item)
       : JSON.stringify(item);
+  }
+
+  _selectHighlighted() {
+    let results = this._getResults();
+    if (!results || !results.length) {
+      return;
+    }
+
+    let highlightedItem = results[0]
+      , offset = 0;
+
+    for (let i=0, len=results.length; i<len; i++) {
+      if (offset + results[i].items.length <= this.state.highlightIndex ) {
+        offset += results[i].items.length;
+        continue;
+      }
+      highlightedItem = results[i].items[this.state.highlightIndex - offset];
+      break;
+    }
+
+    this._selectItem(highlightedItem);
   }
 
   _selectItem(item) {
@@ -142,12 +233,14 @@ class SmartSearch extends React.Component {
           )}
           <div className="Select-input">
             <input
+              autoComplete="off"
               type="text"
               name="search"
               value={this.state.query}
               onChange={(e) => { this._handleChange(e); }}
               onFocus={() => { this._onFocus(); }}
-              onBlur={() => { this._onBlur(); }} />
+              onBlur={() => { this._onBlur(); }}
+              onKeyDown={(e) => { this._onKeyDown(e); }} />
           </div>
         </div>
         <div className="Select-menu-outer ss-results">
@@ -159,7 +252,7 @@ class SmartSearch extends React.Component {
                 <h3 className="ss-group-heading">{results.label}</h3> : '' }
               {results.items && results.items.map((result, j) =>
                 <div
-                  className="ss-item"
+                  className={this._getItemClass(j)}
                   key={j}
                   onClick={() => {this._selectItem(result)}}>
                   {this._renderItem(result)}

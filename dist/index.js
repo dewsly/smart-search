@@ -86,11 +86,13 @@
        * @property {array} selected array of selected items
        * @property {string} query search string
        * @property {bool} focused boolean indicating whether input is focused
+       * @property {int} highlightIndex int indicate which result should be highlighted
        */
       _this.state = {
         selected: [],
         query: _this.props.query,
-        focused: false
+        focused: false,
+        highlightIndex: 0
       };
       _this._selectItem = _this._selectItem.bind(_this);
       _this._removeItem = _this._removeItem.bind(_this);
@@ -120,14 +122,54 @@
         return className;
       }
     }, {
+      key: '_getItemClass',
+      value: function _getItemClass(index) {
+        var className = "Select-option ss-item";
+        if (this.state.highlightIndex == index) {
+          className += " active";
+        }
+        return className;
+      }
+    }, {
       key: '_getResults',
       value: function _getResults() {
         return this.props.results;
       }
     }, {
+      key: '_getResultCount',
+      value: function _getResultCount() {
+        return this._getResults().reduce(function (previous, current) {
+          return previous + current.items.length;
+        }, 0);
+      }
+    }, {
       key: '_handleChange',
       value: function _handleChange(event) {
         this._onQueryChange(event.target.value);
+      }
+    }, {
+      key: '_highlightNextResult',
+      value: function _highlightNextResult() {
+        var index = this.state.highlightIndex;
+        if (this._getResultCount() <= index + 1) {
+          index = -1;
+        }
+        console.log(index + 1);
+        this.setState({
+          highlightIndex: index + 1
+        });
+      }
+    }, {
+      key: '_highlightPreviousResult',
+      value: function _highlightPreviousResult() {
+        var index = this.state.highlightIndex;
+        if (index - 1 < 0) {
+          index = this._getResultCount();
+        }
+        console.log(index - 1);
+        this.setState({
+          highlightIndex: index - 1
+        });
       }
     }, {
       key: '_onBlur',
@@ -142,6 +184,39 @@
         this.setState({
           focused: true
         });
+      }
+    }, {
+      key: '_onKeyDown',
+      value: function _onKeyDown(e) {
+        var stop = false;
+
+        switch (e.which) {
+          case 8:
+            if (!this.state.query && this.state.selected.length) {
+              this._removeItem(this.state.selected[this.state.selected.length - 1]);
+            }
+            break;
+          case 38:
+            // up
+            stop = true;
+            this._highlightPreviousResult();
+            break;
+          case 40:
+            // down
+            stop = true;
+            this._highlightNextResult();
+            break;
+          case 13:
+          case 176:
+            // enter / numpad enter
+            stop = true;
+            this._selectHighlighted();
+            break;
+        }
+        if (stop) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
       }
     }, {
       key: '_onQueryChange',
@@ -186,6 +261,28 @@
       key: '_renderSelectedItem',
       value: function _renderSelectedItem(item) {
         return this.props.renderSelectedItem ? this.props.renderSelectedItem(item) : JSON.stringify(item);
+      }
+    }, {
+      key: '_selectHighlighted',
+      value: function _selectHighlighted() {
+        var results = this._getResults();
+        if (!results || !results.length) {
+          return;
+        }
+
+        var highlightedItem = results[0],
+            offset = 0;
+
+        for (var i = 0, len = results.length; i < len; i++) {
+          if (offset + results[i].items.length <= this.state.highlightIndex) {
+            offset += results[i].items.length;
+            continue;
+          }
+          highlightedItem = results[i].items[this.state.highlightIndex - offset];
+          break;
+        }
+
+        this._selectItem(highlightedItem);
       }
     }, {
       key: '_selectItem',
@@ -251,6 +348,7 @@
               'div',
               { className: 'Select-input' },
               _react2.default.createElement('input', {
+                autoComplete: 'off',
                 type: 'text',
                 name: 'search',
                 value: this.state.query,
@@ -262,6 +360,9 @@
                 },
                 onBlur: function onBlur() {
                   _this2._onBlur();
+                },
+                onKeyDown: function onKeyDown(e) {
+                  _this2._onKeyDown(e);
                 } })
             )
           ),
@@ -283,7 +384,7 @@
                   return _react2.default.createElement(
                     'div',
                     {
-                      className: 'ss-item',
+                      className: _this2._getItemClass(j),
                       key: j,
                       onClick: function onClick() {
                         _this2._selectItem(result);
