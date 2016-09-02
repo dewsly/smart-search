@@ -26,7 +26,7 @@ class SmartSearch extends React.Component {
   }
 
   _focusSearch() {
-    this.refs.searchInput.getDOMNode().focus();
+    React.findDOMNode('searchInput').focus();
   }
 
   _getComponentClass() {

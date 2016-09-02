@@ -105,6 +105,11 @@
         }
       }
     }, {
+      key: '_focusSearch',
+      value: function _focusSearch() {
+        this.refs.searchInput.getDOMNode().focus();
+      }
+    }, {
       key: '_getComponentClass',
       value: function _getComponentClass() {
         var className = 'Select smart-search';
@@ -229,7 +234,9 @@
           { className: this._getComponentClass() },
           _react2.default.createElement(
             'div',
-            { className: 'Select-control' },
+            { className: 'Select-control', onClick: function onClick() {
+                _this2._focusSearch();
+              } },
             _react2.default.createElement(
               'label',
               { className: 'ss-label' },
@@ -253,6 +260,7 @@
               _react2.default.createElement('input', {
                 type: 'text',
                 name: 'search',
+                ref: 'searchInput',
                 value: this.state.query,
                 onChange: function onChange(e) {
                   _this2._handleChange(e);
