@@ -195,7 +195,6 @@
 
         if (this.props.multi) {
           var alreadyExists = this.state.selected.reduce(function (previous, current) {
-            console.log(previous, current.id, item.id);
             return previous || current.id == item.id;
           }, false);
           if (!alreadyExists) {

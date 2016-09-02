@@ -25,6 +25,10 @@ class SmartSearch extends React.Component {
     }
   }
 
+  _focusSearch() {
+    this.refs.searchInput.getDOMNode().focus();
+  }
+
   _getComponentClass() {
     let className = 'Select smart-search';
     if (this.state.focused) {
@@ -130,7 +134,7 @@ class SmartSearch extends React.Component {
     let _results = this._getResults();
     return (
       <div className={this._getComponentClass()}>
-        <div className="Select-control">
+        <div className="Select-control" onClick={() => {this._focusSearch(); }}>
           <label className="ss-label">{this._renderLabel()}</label>
           {this.state.selected.map((item, i) =>
             <div
@@ -144,6 +148,7 @@ class SmartSearch extends React.Component {
             <input
               type="text"
               name="search"
+              ref="searchInput"
               value={this.state.query}
               onChange={(e) => { this._handleChange(e); }}
               onFocus={() => { this._onFocus(); }}
