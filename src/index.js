@@ -68,7 +68,6 @@ class SmartSearch extends React.Component {
     if (this._getResultCount() <= (index + 1)) {
       index = -1;
     }
-    console.log(index+1);
     this.setState({
       highlightIndex: index + 1
     });
@@ -79,7 +78,6 @@ class SmartSearch extends React.Component {
     if ((index-1) < 0) {
       index = this._getResultCount();
     }
-    console.log(index-1);
     this.setState({
       highlightIndex: index - 1
     });
@@ -221,8 +219,8 @@ class SmartSearch extends React.Component {
     let _results = this._getResults();
     return (
       <div className={this._getComponentClass()}>
+        <label className="ss-label">{this._renderLabel()}</label>
         <div className="Select-control">
-          <label className="ss-label">{this._renderLabel()}</label>
           {this.state.selected.map((item, i) =>
             <div
               className="ss-selected-item"

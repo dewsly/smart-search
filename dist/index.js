@@ -154,7 +154,6 @@
         if (this._getResultCount() <= index + 1) {
           index = -1;
         }
-        console.log(index + 1);
         this.setState({
           highlightIndex: index + 1
         });
@@ -166,7 +165,6 @@
         if (index - 1 < 0) {
           index = this._getResultCount();
         }
-        console.log(index - 1);
         this.setState({
           highlightIndex: index - 1
         });
@@ -325,13 +323,13 @@
           'div',
           { className: this._getComponentClass() },
           _react2.default.createElement(
+            'label',
+            { className: 'ss-label' },
+            this._renderLabel()
+          ),
+          _react2.default.createElement(
             'div',
             { className: 'Select-control' },
-            _react2.default.createElement(
-              'label',
-              { className: 'ss-label' },
-              this._renderLabel()
-            ),
             this.state.selected.map(function (item, i) {
               return _react2.default.createElement(
                 'div',
