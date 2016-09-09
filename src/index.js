@@ -10,12 +10,16 @@ class SmartSearch extends React.Component {
      * @property {string} query search string
      * @property {bool} focused boolean indicating whether input is focused
      * @property {int} highlightIndex int indicate which result should be highlighted
+     * @property {object} cache object map of query -> results
+     * @property {array} cachedResults array of resuilts to use when caching enabled
      */
     this.state = {
       selected: [],
       query: this.props.query,
       focused: false,
-      highlightIndex: 0
+      highlightIndex: 0,
+      cache: {},
+      cachedResults: null
     };
     this._selectItem = this._selectItem.bind(this);
     this._removeItem = this._removeItem.bind(this);
@@ -50,7 +54,7 @@ class SmartSearch extends React.Component {
   }
 
   _getResults() {
-    return this.props.results;
+    return this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
   }
 
   _getResultCount() {
@@ -137,9 +141,26 @@ class SmartSearch extends React.Component {
       return;
     }
 
+    if (this.props.cache && this.state.cache[query]) {
+      // set cached results to value of cache
+      this.setState({
+        cachedResults: this.state.cache[query]
+      });
+      return;
+    }
     // execute search action with search value:
     if (this.props.search) {
-      this.props.search(query);
+      var self = this;
+      this.props.search(query, function (err, results) {
+        var cache = self.state.cache;
+        if (self.props.cache) {
+          cache[query] = results;
+        }
+        self.setState({
+          cachedResults: results,
+          cache: cache
+        });
+      });
     }
   }
 
@@ -207,7 +228,8 @@ class SmartSearch extends React.Component {
 
     this.setState({
       selected: selected,
-      query: ''
+      query: '',
+      cachedResults: []
     });
     if (removedItem && this.props.onRemove) {
       this.props.onRemove(removedItem, selected);
@@ -275,11 +297,14 @@ SmartSearch.propTypes = {
   onRemove: React.PropTypes.func,
   results: React.PropTypes.array,
   minCharacters: React.PropTypes.number,
-  showGroupHeading: React.PropTypes.bool
+  showGroupHeading: React.PropTypes.bool,
+  cache: React.PropTypes.bool
 };
 SmartSearch.defaultProps = {
   query: '',
   minCharacters: 3,
-  showGroupHeading: true
+  showGroupHeading: true,
+  cache: false,
+  results: []
 };
 export default SmartSearch;

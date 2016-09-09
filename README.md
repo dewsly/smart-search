@@ -21,14 +21,15 @@
   minCharacters={Number}
   showGroupHeading={Boolean}
   multi={Boolean}
+  cache={Boolean}
 />
 ```
 
 ## Properties
 ### `search` *(required)*
-**Type:** String
+**Type:** Callback `function (query, callback) { ... }`
 
-**Description:** Callback function called when requesting search results for a given query. Should accept one parameter used to execute the search.
+**Description:** Callback function called when requesting search results for a given query. Should accept two parameters, the query and a callback to return search results based on the query.
 
 ### `renderItem` *(required)*
 **Type:** Callback `function (item) { ... }`
@@ -79,6 +80,11 @@
 **Type:** Boolean
 
 **Description:** Specify whether or not to allow multiple selected items (default: true)
+
+### `cache`		
+**Type:** Boolean		
+
+**Description:** Boolean value to specify whether to leverage caching (default: false)
 
 ## Results Array
 The results are expected to be an array of 0+ groups. Each group should have a `label` that will be used as the group heading in the render (unless `showGroupHeading` is falsy) and an array of `items`, which represent the selectable items within a group.

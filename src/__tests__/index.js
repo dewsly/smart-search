@@ -273,6 +273,22 @@ describe('Full DOM Rendering', () => {
     expect(search.calledOnce).to.equal(true);
   });
 
+  it('should not trigger props.search when searching for a cached query', () => {
+    const search = sinon.stub().callsArgWith(1, null, {"label":"Users", "items":results});
+
+    const wrapper = mount(<SmartSearch search={search} query='' results={noresults} cache={true} />);
+    expect(wrapper.props().query).to.equal('');
+
+    wrapper.setProps({ query: 'search', results: noresults });
+    expect(wrapper.props().query).to.equal('search');
+    wrapper.setProps({ query: 'se' });
+    expect(wrapper.props().query).to.equal('se');
+    wrapper.setProps({ query: 'search' });
+    expect(wrapper.props().query).to.equal('search');
+
+    expect(search.callCount).to.equal(1);
+  });
+
   it('should update query state when input field value changes', () => {
     const wrapper = mount(<SmartSearch query='' />);
     expect(wrapper.state().query).to.equal('');

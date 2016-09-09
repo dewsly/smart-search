@@ -87,12 +87,16 @@
        * @property {string} query search string
        * @property {bool} focused boolean indicating whether input is focused
        * @property {int} highlightIndex int indicate which result should be highlighted
+       * @property {object} cache object map of query -> results
+       * @property {array} cachedResults array of resuilts to use when caching enabled
        */
       _this.state = {
         selected: [],
         query: _this.props.query,
         focused: false,
-        highlightIndex: 0
+        highlightIndex: 0,
+        cache: {},
+        cachedResults: null
       };
       _this._selectItem = _this._selectItem.bind(_this);
       _this._removeItem = _this._removeItem.bind(_this);
@@ -133,7 +137,7 @@
     }, {
       key: '_getResults',
       value: function _getResults() {
-        return this.props.results;
+        return this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
       }
     }, {
       key: '_getResultCount',
@@ -228,9 +232,26 @@
           return;
         }
 
+        if (this.props.cache && this.state.cache[query]) {
+          // set cached results to value of cache
+          this.setState({
+            cachedResults: this.state.cache[query]
+          });
+          return;
+        }
         // execute search action with search value:
         if (this.props.search) {
-          this.props.search(query);
+          var self = this;
+          this.props.search(query, function (err, results) {
+            var cache = self.state.cache;
+            if (self.props.cache) {
+              cache[query] = results;
+            }
+            self.setState({
+              cachedResults: results,
+              cache: cache
+            });
+          });
         }
       }
     }, {
@@ -304,7 +325,8 @@
 
         this.setState({
           selected: selected,
-          query: ''
+          query: '',
+          cachedResults: []
         });
         if (removedItem && this.props.onRemove) {
           this.props.onRemove(removedItem, selected);
@@ -410,12 +432,15 @@
     onRemove: _react2.default.PropTypes.func,
     results: _react2.default.PropTypes.array,
     minCharacters: _react2.default.PropTypes.number,
-    showGroupHeading: _react2.default.PropTypes.bool
+    showGroupHeading: _react2.default.PropTypes.bool,
+    cache: _react2.default.PropTypes.bool
   };
   SmartSearch.defaultProps = {
     query: '',
     minCharacters: 3,
-    showGroupHeading: true
+    showGroupHeading: true,
+    cache: false,
+    results: []
   };
   exports.default = SmartSearch;
 });
