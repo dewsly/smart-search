@@ -113,7 +113,7 @@
     }, {
       key: '_getComponentClass',
       value: function _getComponentClass() {
-        var className = 'Select smart-search';
+        var className = 'smart-search';
         if (this.state.focused) {
           className += ' is-focused is-open';
         }
@@ -128,7 +128,7 @@
     }, {
       key: '_getItemClass',
       value: function _getItemClass(index) {
-        var className = "Select-option ss-item";
+        var className = "ss-item";
         if (this.state.highlightIndex == index) {
           className += " active";
         }
@@ -137,13 +137,31 @@
     }, {
       key: '_getResults',
       value: function _getResults() {
-        return this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
+        var self = this;
+        var results = this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
+
+        // remove any selected results from the set:
+        var filteredResults = results.map(function (group) {
+          if (!group || !group.items) {
+            return group;
+          }
+
+          var filteredItems = group.items.filter(function (result) {
+            return !self._isSelected(result);
+          });
+          var updated = Object.assign({}, group);
+          updated.items = filteredItems;
+
+          return updated;
+        });
+
+        return filteredResults;
       }
     }, {
       key: '_getResultCount',
       value: function _getResultCount() {
         return this._getResults().reduce(function (previous, current) {
-          return previous + current.items.length;
+          return previous + (current && current.items ? current.items.length : 0);
         }, 0);
       }
     }, {
@@ -174,6 +192,14 @@
         });
       }
     }, {
+      key: '_isSelected',
+      value: function _isSelected(item) {
+        var found = this.state.selected.filter(function (result) {
+          return result.id === item.id;
+        });
+        return found.length;
+      }
+    }, {
       key: '_onBlur',
       value: function _onBlur() {
         this.setState({
@@ -194,6 +220,7 @@
 
         switch (e.which) {
           case 8:
+            // delete
             if (!this.state.query && this.state.selected.length) {
               this._removeItem(this.state.selected[this.state.selected.length - 1]);
             }
@@ -322,11 +349,11 @@
           }
           selected = [item];
         }
-
         this.setState({
           selected: selected,
           query: '',
-          cachedResults: []
+          cachedResults: [],
+          highlightIndex: 0
         });
         if (removedItem && this.props.onRemove) {
           this.props.onRemove(removedItem, selected);
@@ -346,12 +373,14 @@
           { className: this._getComponentClass() },
           _react2.default.createElement(
             'label',
-            { className: 'ss-label' },
+            {
+              className: 'ss-label',
+              title: this._renderLabel() },
             this._renderLabel()
           ),
           _react2.default.createElement(
             'div',
-            { className: 'Select-control' },
+            { className: 'ss-control' },
             this.state.selected.map(function (item, i) {
               return _react2.default.createElement(
                 'div',
@@ -366,11 +395,12 @@
             }),
             _react2.default.createElement(
               'div',
-              { className: 'Select-input' },
+              { className: 'ss-input' },
               _react2.default.createElement('input', {
                 autoComplete: 'off',
                 type: 'text',
                 name: 'search',
+                title: this._renderLabel(),
                 value: this.state.query,
                 onChange: function onChange(e) {
                   _this2._handleChange(e);
@@ -388,7 +418,7 @@
           ),
           _react2.default.createElement(
             'div',
-            { className: 'Select-menu-outer ss-results' },
+            { className: 'ss-results' },
             _results && _results.map(function (results, i) {
               return _react2.default.createElement(
                 'div',

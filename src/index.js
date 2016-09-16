@@ -32,7 +32,7 @@ class SmartSearch extends React.Component {
   }
 
   _getComponentClass() {
-    let className = 'Select smart-search';
+    let className = 'smart-search';
     if (this.state.focused) {
       className += ' is-focused is-open';
     }
@@ -46,7 +46,7 @@ class SmartSearch extends React.Component {
   }
 
   _getItemClass(index) {
-    let className = "Select-option ss-item";
+    let className = "ss-item";
     if (this.state.highlightIndex == index) {
       className += " active";
     }
@@ -54,12 +54,30 @@ class SmartSearch extends React.Component {
   }
 
   _getResults() {
-    return this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
+    let self = this;
+    let results = this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
+
+    // remove any selected results from the set:
+    let filteredResults = results.map((group) => {
+      if (!group || !group.items) {
+        return group;
+      }
+
+      let filteredItems = group.items.filter((result) => {
+        return !self._isSelected(result);
+      });
+      let updated = Object.assign({}, group);
+      updated.items = filteredItems;
+
+      return updated;
+    });
+
+    return filteredResults;
   }
 
   _getResultCount() {
     return this._getResults().reduce((previous, current) => {
-      return previous + current.items.length;
+      return previous + (current && current.items ? current.items.length : 0);
     }, 0);
   }
 
@@ -87,6 +105,13 @@ class SmartSearch extends React.Component {
     });
   }
 
+  _isSelected(item) {
+    let found = this.state.selected.filter((result) => {
+      return result.id === item.id;
+    });
+    return found.length;
+  }
+
   _onBlur() {
     this.setState({
       focused: false
@@ -104,6 +129,7 @@ class SmartSearch extends React.Component {
 
     switch(e.which) {
       case 8:
+        // delete
         if (!this.state.query && this.state.selected.length) {
           this._removeItem(this.state.selected[this.state.selected.length-1]);
         }
@@ -225,11 +251,11 @@ class SmartSearch extends React.Component {
       }
       selected = [item];
     }
-
     this.setState({
       selected: selected,
       query: '',
-      cachedResults: []
+      cachedResults: [],
+      highlightIndex: 0
     });
     if (removedItem && this.props.onRemove) {
       this.props.onRemove(removedItem, selected);
@@ -241,8 +267,10 @@ class SmartSearch extends React.Component {
     let _results = this._getResults();
     return (
       <div className={this._getComponentClass()}>
-        <label className="ss-label">{this._renderLabel()}</label>
-        <div className="Select-control">
+        <label
+          className="ss-label"
+          title={this._renderLabel()}>{this._renderLabel()}</label>
+        <div className="ss-control">
           {this.state.selected.map((item, i) =>
             <div
               className="ss-selected-item"
@@ -251,11 +279,12 @@ class SmartSearch extends React.Component {
               {this._renderSelectedItem(item)}
             </div>
           )}
-          <div className="Select-input">
+          <div className="ss-input">
             <input
               autoComplete="off"
               type="text"
               name="search"
+              title={this._renderLabel()}
               value={this.state.query}
               onChange={(e) => { this._handleChange(e); }}
               onFocus={() => { this._onFocus(); }}
@@ -263,7 +292,7 @@ class SmartSearch extends React.Component {
               onKeyDown={(e) => { this._onKeyDown(e); }} />
           </div>
         </div>
-        <div className="Select-menu-outer ss-results">
+        <div className="ss-results">
           {_results && _results.map((results, i) =>
             <div
               className="ss-group"

@@ -296,4 +296,17 @@ describe('Full DOM Rendering', () => {
     expect(wrapper.state().query).to.equal('test');
   });
 
+  it('should not render items that are already selected', () => {
+    const renderItem = function (item) {
+      return (
+        <div id={'item-'+item.id}>{item.name}</div>
+      );
+    };
+
+    const wrapper = mount(<SmartSearch results={results} cache={true} renderItem={renderItem} />);
+    wrapper.find('#item-1').first().closest('.ss-item').simulate('click');
+    expect(wrapper.state().selected).to.have.length(1);
+    expect(wrapper.find('#item-1')).to.have.length(0);
+  });
+
 });
