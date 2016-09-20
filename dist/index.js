@@ -202,9 +202,12 @@
     }, {
       key: '_onBlur',
       value: function _onBlur() {
-        this.setState({
-          focused: false
-        });
+        var self = this;
+        setTimeout(function () {
+          self.setState({
+            focused: false
+          });
+        }, 200);
       }
     }, {
       key: '_onFocus',

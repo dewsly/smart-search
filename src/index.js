@@ -113,9 +113,12 @@ class SmartSearch extends React.Component {
   }
 
   _onBlur() {
-    this.setState({
-      focused: false
-    });
+    let self = this;
+    setTimeout(function () {
+      self.setState({
+        focused: false
+      });
+    }, 200);
   }
 
   _onFocus() {
