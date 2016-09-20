@@ -19,6 +19,7 @@
   onSelect={Function}
   onRemove={Function}
   minCharacters={Number}
+  delay={Number}
   showGroupHeading={Boolean}
   multi={Boolean}
   cache={Boolean}
@@ -70,6 +71,11 @@
 **Type:** Number
 
 **Description:** The minimum characters the query should be before triggering the search (default: 3)
+
+### `delay`
+**Type:** Number
+
+**Description:** The number of milliseconds to delay before triggering the search (default: 500)
 
 ### `showGroupHeading`
 **Type:** Boolean
