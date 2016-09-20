@@ -177,16 +177,21 @@ class SmartSearch extends React.Component {
     // execute search action with search value:
     if (this.props.search) {
       var self = this;
-      this.props.search(query, function (err, results) {
-        var cache = self.state.cache;
-        if (self.props.cache) {
-          cache[query] = results;
-        }
-        self.setState({
-          cachedResults: results,
-          cache: cache
+
+      clearTimeout(self.queryTimeout);
+
+      self.queryTimeout = setTimeout(function () {
+        self.props.search(query, function (err, results) {
+          var cache = self.state.cache;
+          if (self.props.cache) {
+            cache[query] = results;
+          }
+          self.setState({
+            cachedResults: results,
+            cache: cache
+          });
         });
-      });
+      }, self.props.delay);
     }
   }
 
@@ -327,13 +332,15 @@ SmartSearch.propTypes = {
   results: React.PropTypes.array,
   minCharacters: React.PropTypes.number,
   showGroupHeading: React.PropTypes.bool,
-  cache: React.PropTypes.bool
+  cache: React.PropTypes.bool,
+  delay: React.PropTypes.number
 };
 SmartSearch.defaultProps = {
   query: '',
   minCharacters: 3,
   showGroupHeading: true,
   cache: false,
-  results: []
+  results: [],
+  delay: 500
 };
 export default SmartSearch;

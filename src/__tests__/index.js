@@ -257,7 +257,7 @@ describe('Full DOM Rendering', () => {
 
   it('should not trigger props.search when props.query.lengths < props.minCharacters', () => {
     const search = sinon.spy();
-    const wrapper = mount(<SmartSearch search={search} query='' results={noresults} />);
+    const wrapper = mount(<SmartSearch delay={0} search={search} query='' results={noresults} />);
     expect(wrapper.props().query).to.equal('');
     wrapper.setProps({ query: 'se' });
     expect(wrapper.props().query).to.equal('se');
@@ -266,17 +266,22 @@ describe('Full DOM Rendering', () => {
 
   it('should trigger props.search when props.query.length >= props.minCharacters', () => {
     const search = sinon.spy();
-    const wrapper = mount(<SmartSearch search={search} query='' results={noresults} />);
+    const wrapper = mount(<SmartSearch delay={0} search={search} query='' results={noresults} />);
     expect(wrapper.props().query).to.equal('');
     wrapper.setProps({ query: 'search' });
     expect(wrapper.props().query).to.equal('search');
-    expect(search.calledOnce).to.equal(true);
+    expect(wrapper.props().delay).to.equal(0);
+
+    setTimeout(function () {
+      expect(search.callCount).to.equal(1);
+    }, 0);
+
   });
 
   it('should not trigger props.search when searching for a cached query', () => {
     const search = sinon.stub().callsArgWith(1, null, {"label":"Users", "items":results});
 
-    const wrapper = mount(<SmartSearch search={search} query='' results={noresults} cache={true} />);
+    const wrapper = mount(<SmartSearch delay={0} search={search} query='' results={noresults} cache={true} />);
     expect(wrapper.props().query).to.equal('');
 
     wrapper.setProps({ query: 'search', results: noresults });
@@ -286,7 +291,9 @@ describe('Full DOM Rendering', () => {
     wrapper.setProps({ query: 'search' });
     expect(wrapper.props().query).to.equal('search');
 
-    expect(search.callCount).to.equal(1);
+    setTimeout(function () {
+      expect(search.callCount).to.equal(1);
+    }, 0);
   });
 
   it('should update query state when input field value changes', () => {
