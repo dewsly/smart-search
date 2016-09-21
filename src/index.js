@@ -41,7 +41,7 @@ class SmartSearch extends React.Component {
   componentDidMount() {
     if (this.props.receiveFocus) {
       let self = this;
-      this.props.receiveFocus(() => {
+      this.props.receiveFocus(function () {
         self._focus();
       });
     }
