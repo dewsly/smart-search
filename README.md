@@ -16,6 +16,7 @@
   label={String}
   query={String}
   results={Array}
+  selected={Array}
   onSelect={Function}
   onRemove={Function}
   minCharacters={Number}
@@ -56,6 +57,11 @@
 **Type:** Array (See the [Results Array](#results-array) section)
 
 **Description:** Array of grouped results, used for rendering the listing of result items.
+
+### `selected`
+**Type:** Array
+
+**Description:** Array of results that should be pre-selected.
 
 ### `onSelect`
 **Type:** Callback `function (selectedItem, selectedItems) { ... }`

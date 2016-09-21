@@ -103,6 +103,19 @@ describe('Shallow Rendering', () => {
     expect(onSelect.getCall(0).args[1]).to.be.an('array');
   });
 
+  it('pre-populates selected items when passing in items', () => {
+    let selected = results[0].items;
+
+    const wrapper = shallow(
+      <SmartSearch
+        results={results}
+        selected={selected} />
+    );
+    setTimeout(function () {
+      expect(wrapper.find('.ss-selected-item')).to.have.length(2);
+    }, 0);
+  });
+
   it('has one .ss-selected-item after clicking on a result', () => {
     const wrapper = shallow(
       <SmartSearch

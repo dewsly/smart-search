@@ -109,6 +109,13 @@
         if (nextProps.query !== this.props.query) {
           this._onQueryChange(nextProps.query);
         }
+        if (nextProps.selected && nextProps.selected.length) {
+          for (var i = 0, len = nextProps.selected.length; i < len; i++) {
+            if (!this._isSelected(nextProps.selected[i])) {
+              this._selectItem(nextProps.selected[i]);
+            }
+          }
+        }
       }
     }, {
       key: '_getComponentClass',
@@ -292,13 +299,14 @@
     }, {
       key: '_removeItem',
       value: function _removeItem(item) {
+        var selected = this.state.selected.filter(function (val) {
+          return val.id !== item.id;
+        });
         this.setState({
-          selected: this.state.selected.filter(function (val) {
-            return val.id !== item.id;
-          })
+          selected: selected
         });
         if (this.props.onRemove) {
-          this.props.onRemove(item, this.state.selected);
+          this.props.onRemove(item, selected);
         }
       }
     }, {
@@ -472,7 +480,8 @@
     minCharacters: _react2.default.PropTypes.number,
     showGroupHeading: _react2.default.PropTypes.bool,
     cache: _react2.default.PropTypes.bool,
-    delay: _react2.default.PropTypes.number
+    delay: _react2.default.PropTypes.number,
+    selected: _react2.default.PropTypes.array
   };
   SmartSearch.defaultProps = {
     query: '',
@@ -480,7 +489,8 @@
     showGroupHeading: true,
     cache: false,
     results: [],
-    delay: 500
+    delay: 500,
+    selected: []
   };
   exports.default = SmartSearch;
 });

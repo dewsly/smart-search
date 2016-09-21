@@ -29,6 +29,13 @@ class SmartSearch extends React.Component {
     if (nextProps.query !== this.props.query) {
       this._onQueryChange(nextProps.query);
     }
+    if (nextProps.selected && nextProps.selected.length) {
+      for(var i=0, len=nextProps.selected.length; i<len; i++) {
+        if (!this._isSelected(nextProps.selected[i])) {
+          this._selectItem(nextProps.selected[i]);
+        }
+      }
+    }
   }
 
   _getComponentClass() {
@@ -199,12 +206,13 @@ class SmartSearch extends React.Component {
   }
 
   _removeItem(item) {
-    this.setState({
-      selected: this.state.selected.filter((val) => {
-        return val.id !== item.id;
-      })
+    const selected = this.state.selected.filter((val) => {
+      return val.id !== item.id;
     });
-    if (this.props.onRemove) { this.props.onRemove(item, this.state.selected); }
+    this.setState({
+      selected: selected
+    });
+    if (this.props.onRemove) { this.props.onRemove(item, selected); }
   }
 
   _renderItem(item) {
@@ -336,7 +344,8 @@ SmartSearch.propTypes = {
   minCharacters: React.PropTypes.number,
   showGroupHeading: React.PropTypes.bool,
   cache: React.PropTypes.bool,
-  delay: React.PropTypes.number
+  delay: React.PropTypes.number,
+  selected: React.PropTypes.array
 };
 SmartSearch.defaultProps = {
   query: '',
@@ -344,6 +353,7 @@ SmartSearch.defaultProps = {
   showGroupHeading: true,
   cache: false,
   results: [],
-  delay: 500
+  delay: 500,
+  selected: []
 };
 export default SmartSearch;
