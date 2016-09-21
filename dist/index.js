@@ -118,6 +118,28 @@
         }
       }
     }, {
+      key: 'componentDidMount',
+      value: function componentDidMount() {
+        var _this2 = this;
+
+        if (this.props.receiveFocus) {
+          (function () {
+            var self = _this2;
+            _this2.props.receiveFocus(function () {
+              self._focus();
+            });
+          })();
+        }
+      }
+    }, {
+      key: '_focus',
+      value: function _focus() {
+        if (this._input) {
+          this._input.focus();
+          this._onFocus();
+        }
+      }
+    }, {
       key: '_getComponentClass',
       value: function _getComponentClass() {
         var className = 'smart-search';
@@ -210,18 +232,23 @@
       key: '_onBlur',
       value: function _onBlur() {
         var self = this;
-        setTimeout(function () {
+        clearTimeout(this._focusTimeout);
+        this._focusTimeout = setTimeout(function () {
           self.setState({
             focused: false
           });
-        }, 200);
+        }, 100);
       }
     }, {
       key: '_onFocus',
       value: function _onFocus() {
-        this.setState({
-          focused: true
-        });
+        var self = this;
+        clearTimeout(this._focusTimeout);
+        this._focusTimeout = setTimeout(function () {
+          self.setState({
+            focused: true
+          });
+        }, 100);
       }
     }, {
       key: '_onKeyDown',
@@ -381,7 +408,7 @@
     }, {
       key: 'render',
       value: function render() {
-        var _this2 = this;
+        var _this3 = this;
 
         var _results = this._getResults();
         return _react2.default.createElement(
@@ -404,9 +431,9 @@
                   className: 'ss-selected-item',
                   key: i,
                   onClick: function onClick() {
-                    _this2._removeItem(item);
+                    _this3._removeItem(item);
                   } },
-                _this2._renderSelectedItem(item)
+                _this3._renderSelectedItem(item)
               );
             }),
             _react2.default.createElement(
@@ -416,19 +443,22 @@
                 autoComplete: 'off',
                 type: 'text',
                 name: 'search',
+                ref: function ref(e) {
+                  _this3._input = e;
+                },
                 title: this._renderLabel(),
                 value: this.state.query,
                 onChange: function onChange(e) {
-                  _this2._handleChange(e);
+                  _this3._handleChange(e);
                 },
                 onFocus: function onFocus() {
-                  _this2._onFocus();
+                  _this3._onFocus();
                 },
                 onBlur: function onBlur() {
-                  _this2._onBlur();
+                  _this3._onBlur();
                 },
                 onKeyDown: function onKeyDown(e) {
-                  _this2._onKeyDown(e);
+                  _this3._onKeyDown(e);
                 } })
             )
           ),
@@ -441,7 +471,7 @@
                 {
                   className: 'ss-group',
                   key: i },
-                _this2.props.showGroupHeading ? _react2.default.createElement(
+                _this3.props.showGroupHeading ? _react2.default.createElement(
                   'h3',
                   { className: 'ss-group-heading' },
                   results.label
@@ -450,12 +480,12 @@
                   return _react2.default.createElement(
                     'div',
                     {
-                      className: _this2._getItemClass(j),
+                      className: _this3._getItemClass(j),
                       key: j,
                       onClick: function onClick() {
-                        _this2._selectItem(result);
+                        _this3._selectItem(result);
                       } },
-                    _this2._renderItem(result)
+                    _this3._renderItem(result)
                   );
                 })
               );

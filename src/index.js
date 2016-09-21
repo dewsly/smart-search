@@ -38,6 +38,22 @@ class SmartSearch extends React.Component {
     }
   }
 
+  componentDidMount() {
+    if (this.props.receiveFocus) {
+      let self = this;
+      this.props.receiveFocus(() => {
+        self._focus();
+      });
+    }
+  }
+
+  _focus() {
+    if (this._input) {
+      this._input.focus();
+      this._onFocus();
+    }
+  }
+
   _getComponentClass() {
     let className = 'smart-search';
     if (this.state.focused) {
@@ -121,17 +137,22 @@ class SmartSearch extends React.Component {
 
   _onBlur() {
     let self = this;
-    setTimeout(function () {
+    clearTimeout(this._focusTimeout);
+    this._focusTimeout = setTimeout(function () {
       self.setState({
         focused: false
       });
-    }, 200);
+    }, 100);
   }
 
   _onFocus() {
-    this.setState({
-      focused: true
-    });
+    let self = this;
+    clearTimeout(this._focusTimeout);
+    this._focusTimeout = setTimeout(function () {
+      self.setState({
+        focused: true
+      });
+    }, 100);
   }
 
   _onKeyDown(e) {
@@ -300,6 +321,7 @@ class SmartSearch extends React.Component {
               autoComplete="off"
               type="text"
               name="search"
+              ref={(e) => { this._input = e; }}
               title={this._renderLabel()}
               value={this.state.query}
               onChange={(e) => { this._handleChange(e); }}
