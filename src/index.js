@@ -194,7 +194,7 @@ class SmartSearch extends React.Component {
     });
 
     // determine if query value length is >= props.minCharacters
-    if (!query || query.length < this.props.minCharacters) {
+    if (query.length < this.props.minCharacters) {
       return;
     }
 
