@@ -237,7 +237,7 @@
           self.setState({
             focused: false
           });
-        }, 100);
+        }, 200);
       }
     }, {
       key: '_onFocus',
@@ -292,7 +292,7 @@
         });
 
         // determine if query value length is >= props.minCharacters
-        if (!query || query.length < this.props.minCharacters) {
+        if (query.length < this.props.minCharacters) {
           return;
         }
 

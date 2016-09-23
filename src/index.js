@@ -142,7 +142,7 @@ class SmartSearch extends React.Component {
       self.setState({
         focused: false
       });
-    }, 100);
+    }, 200);
   }
 
   _onFocus() {
