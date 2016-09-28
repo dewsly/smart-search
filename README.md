@@ -24,6 +24,8 @@
   showGroupHeading={Boolean}
   multi={Boolean}
   cache={Boolean}
+  focusAfterSelect={Boolean}
+  focusAfterRemove={Boolean}
 />
 ```
 
@@ -97,6 +99,16 @@
 **Type:** Boolean		
 
 **Description:** Boolean value to specify whether to leverage caching (default: false)
+
+### `focusAfterSelect`
+**Type:** Boolean
+
+**Description:** Specify whether or not the input field should be re-focused after selecting an item (default: true)
+
+### `focusAfterRemove`
+**Type:** Boolean
+
+**Description:** Specify whether or not the input field should be re-focused after removing an item (default: true)
 
 ## Results Array
 The results are expected to be an array of 0+ groups. Each group should have a `label` that will be used as the group heading in the render (unless `showGroupHeading` is falsy) and an array of `items`, which represent the selectable items within a group.

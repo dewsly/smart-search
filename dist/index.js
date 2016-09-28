@@ -118,20 +118,6 @@
         }
       }
     }, {
-      key: 'componentDidMount',
-      value: function componentDidMount() {
-        var _this2 = this;
-
-        if (this.props.receiveFocus) {
-          (function () {
-            var self = _this2;
-            _this2.props.receiveFocus(function () {
-              self._focus();
-            });
-          })();
-        }
-      }
-    }, {
       key: '_focus',
       value: function _focus() {
         if (this._input) {
@@ -340,6 +326,10 @@
         if (this.props.onRemove) {
           this.props.onRemove(item, selected);
         }
+
+        if (this.props.focusAfterRemove) {
+          this._focus();
+        }
       }
     }, {
       key: '_renderItem',
@@ -409,11 +399,14 @@
         if (this.props.onSelect) {
           this.props.onSelect(item, selected);
         }
+        if (this.props.focusAfterSelect) {
+          this._focus();
+        }
       }
     }, {
       key: 'render',
       value: function render() {
-        var _this3 = this;
+        var _this2 = this;
 
         var _results = this._getResults();
         return _react2.default.createElement(
@@ -436,9 +429,9 @@
                   className: 'ss-selected-item',
                   key: i,
                   onClick: function onClick() {
-                    _this3._removeItem(item);
+                    _this2._removeItem(item);
                   } },
-                _this3._renderSelectedItem(item)
+                _this2._renderSelectedItem(item)
               );
             }),
             _react2.default.createElement(
@@ -449,21 +442,21 @@
                 type: 'text',
                 name: 'search',
                 ref: function ref(e) {
-                  _this3._input = e;
+                  _this2._input = e;
                 },
                 title: this._renderLabel(),
                 value: this.state.query,
                 onChange: function onChange(e) {
-                  _this3._handleChange(e);
+                  _this2._handleChange(e);
                 },
                 onFocus: function onFocus() {
-                  _this3._onFocus();
+                  _this2._onFocus();
                 },
                 onBlur: function onBlur() {
-                  _this3._onBlur();
+                  _this2._onBlur();
                 },
                 onKeyDown: function onKeyDown(e) {
-                  _this3._onKeyDown(e);
+                  _this2._onKeyDown(e);
                 } })
             )
           ),
@@ -476,7 +469,7 @@
                 {
                   className: 'ss-group',
                   key: i },
-                _this3.props.showGroupHeading ? _react2.default.createElement(
+                _this2.props.showGroupHeading ? _react2.default.createElement(
                   'h3',
                   { className: 'ss-group-heading' },
                   results.label
@@ -485,12 +478,12 @@
                   return _react2.default.createElement(
                     'div',
                     {
-                      className: _this3._getItemClass(j),
+                      className: _this2._getItemClass(j),
                       key: j,
                       onClick: function onClick() {
-                        _this3._selectItem(result);
+                        _this2._selectItem(result);
                       } },
-                    _this3._renderItem(result)
+                    _this2._renderItem(result)
                   );
                 })
               );
@@ -516,7 +509,9 @@
     showGroupHeading: _react2.default.PropTypes.bool,
     cache: _react2.default.PropTypes.bool,
     delay: _react2.default.PropTypes.number,
-    selected: _react2.default.PropTypes.array
+    selected: _react2.default.PropTypes.array,
+    focusAfterSelect: _react2.default.PropTypes.bool,
+    focusAfterRemove: _react2.default.PropTypes.bool
   };
   SmartSearch.defaultProps = {
     query: '',
@@ -525,7 +520,9 @@
     cache: false,
     results: [],
     delay: 500,
-    selected: []
+    selected: [],
+    focusAfterSelect: true,
+    focusAfterRemove: true
   };
   exports.default = SmartSearch;
 });

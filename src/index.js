@@ -38,15 +38,6 @@ class SmartSearch extends React.Component {
     }
   }
 
-  componentDidMount() {
-    if (this.props.receiveFocus) {
-      let self = this;
-      this.props.receiveFocus(function () {
-        self._focus();
-      });
-    }
-  }
-
   _focus() {
     if (this._input) {
       this._input.focus();
@@ -239,6 +230,10 @@ class SmartSearch extends React.Component {
       selected: selected
     });
     if (this.props.onRemove) { this.props.onRemove(item, selected); }
+
+    if (this.props.focusAfterRemove) {
+      this._focus();
+    }
   }
 
   _renderItem(item) {
@@ -302,7 +297,12 @@ class SmartSearch extends React.Component {
     if (removedItem && this.props.onRemove) {
       this.props.onRemove(removedItem, selected);
     }
-    if (this.props.onSelect) { this.props.onSelect(item, selected); }
+    if (this.props.onSelect) {
+      this.props.onSelect(item, selected);
+    }
+    if (this.props.focusAfterSelect) {
+      this._focus();
+    }
   }
 
   render() {
@@ -372,7 +372,9 @@ SmartSearch.propTypes = {
   showGroupHeading: React.PropTypes.bool,
   cache: React.PropTypes.bool,
   delay: React.PropTypes.number,
-  selected: React.PropTypes.array
+  selected: React.PropTypes.array,
+  focusAfterSelect: React.PropTypes.bool,
+  focusAfterRemove: React.PropTypes.bool
 };
 SmartSearch.defaultProps = {
   query: '',
@@ -381,6 +383,8 @@ SmartSearch.defaultProps = {
   cache: false,
   results: [],
   delay: 500,
-  selected: []
+  selected: [],
+  focusAfterSelect: true,
+  focusAfterRemove: true
 };
 export default SmartSearch;
