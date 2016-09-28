@@ -55,9 +55,20 @@ describe('Shallow Rendering', () => {
     expect(wrapper.find('.ss-label').text()).to.equal('NEW LABEL');
   });
 
+  it('adds .multi class to the container when multi is truthy', () => {
+    const wrapper = shallow(<SmartSearch multi={true}/>);
+    expect(wrapper.find('.smart-search.multi')).to.have.length(1);
+    expect(wrapper.find('.smart-search.single')).to.have.length(0);
+  });
+
+  it('adds .single class to the container when multi is falsy', () => {
+    const wrapper = shallow(<SmartSearch multi={false}/>);
+    expect(wrapper.find('.smart-search.multi')).to.have.length(0);
+    expect(wrapper.find('.smart-search.single')).to.have.length(1);
+  });
+
   it('to have 0 .ss-group elements when no results', () => {
     const wrapper = shallow(<SmartSearch />);
-    expect(wrapper.find('.ss-group')).to.have.length(0);
   });
 
   it('to have 2 .ss-group elements', () => {

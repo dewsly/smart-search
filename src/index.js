@@ -65,6 +65,11 @@ class SmartSearch extends React.Component {
     if (this.state.selected.length) {
       className += ' has-value';
     }
+    if (this.props.multi) {
+      className += ' multi';
+    } else {
+      className += ' single';
+    }
     return className;
   }
 
