@@ -61,6 +61,9 @@ class SmartSearch extends React.Component {
     } else {
       className += ' single';
     }
+    if (!this.props.searchable) {
+      className += ' not-searchable';
+    }
     return className;
   }
 
