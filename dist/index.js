@@ -143,6 +143,11 @@
         } else {
           className += ' single';
         }
+        if (this.props.searchable) {
+          className += ' searchable';
+        } else {
+          className += ' not-searchable';
+        }
         return className;
       }
     }, {
