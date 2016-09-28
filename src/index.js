@@ -101,6 +101,10 @@ class SmartSearch extends React.Component {
   }
 
   _handleChange(event) {
+    if (!this.props.searchable) {
+      return;
+    }
+
     this._onQueryChange(event.target.value);
   }
 
@@ -362,7 +366,7 @@ class SmartSearch extends React.Component {
 SmartSearch.propTypes = {
   label: React.PropTypes.string,
   query: React.PropTypes.string,
-  search: React.PropTypes.func.isRequired,
+  search: React.PropTypes.func,
   renderItem: React.PropTypes.func.isRequired,
   renderSelectedItem: React.PropTypes.func.isRequired,
   onSelect: React.PropTypes.func,
@@ -374,7 +378,8 @@ SmartSearch.propTypes = {
   delay: React.PropTypes.number,
   selected: React.PropTypes.array,
   focusAfterSelect: React.PropTypes.bool,
-  focusAfterRemove: React.PropTypes.bool
+  focusAfterRemove: React.PropTypes.bool,
+  searchable: React.PropTypes.bool
 };
 SmartSearch.defaultProps = {
   query: '',
@@ -385,6 +390,7 @@ SmartSearch.defaultProps = {
   delay: 500,
   selected: [],
   focusAfterSelect: true,
-  focusAfterRemove: true
+  focusAfterRemove: true,
+  searchable: true
 };
 export default SmartSearch;

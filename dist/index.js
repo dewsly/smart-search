@@ -187,6 +187,10 @@
     }, {
       key: '_handleChange',
       value: function _handleChange(event) {
+        if (!this.props.searchable) {
+          return;
+        }
+
         this._onQueryChange(event.target.value);
       }
     }, {
@@ -499,7 +503,7 @@
   SmartSearch.propTypes = {
     label: _react2.default.PropTypes.string,
     query: _react2.default.PropTypes.string,
-    search: _react2.default.PropTypes.func.isRequired,
+    search: _react2.default.PropTypes.func,
     renderItem: _react2.default.PropTypes.func.isRequired,
     renderSelectedItem: _react2.default.PropTypes.func.isRequired,
     onSelect: _react2.default.PropTypes.func,
@@ -511,7 +515,8 @@
     delay: _react2.default.PropTypes.number,
     selected: _react2.default.PropTypes.array,
     focusAfterSelect: _react2.default.PropTypes.bool,
-    focusAfterRemove: _react2.default.PropTypes.bool
+    focusAfterRemove: _react2.default.PropTypes.bool,
+    searchable: _react2.default.PropTypes.bool
   };
   SmartSearch.defaultProps = {
     query: '',
@@ -522,7 +527,8 @@
     delay: 500,
     selected: [],
     focusAfterSelect: true,
-    focusAfterRemove: true
+    focusAfterRemove: true,
+    searchable: true
   };
   exports.default = SmartSearch;
 });

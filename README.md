@@ -26,6 +26,7 @@
   cache={Boolean}
   focusAfterSelect={Boolean}
   focusAfterRemove={Boolean}
+  searchable={Boolean}
 />
 ```
 
@@ -109,6 +110,11 @@
 **Type:** Boolean
 
 **Description:** Specify whether or not the input field should be re-focused after removing an item (default: true)
+
+### `searchable`
+**Type:** Boolean
+
+**Description:** Specify whether or not the smart-search field should execute a search on change (default: true)
 
 ## Results Array
 The results are expected to be an array of 0+ groups. Each group should have a `label` that will be used as the group heading in the render (unless `showGroupHeading` is falsy) and an array of `items`, which represent the selectable items within a group.
