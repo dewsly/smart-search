@@ -95,6 +95,7 @@
         query: _this.props.query,
         focused: false,
         open: false,
+        loading: false,
         highlightIndex: 0,
         cache: {},
         cachedResults: null
@@ -163,6 +164,9 @@
         }
         if (!this.state.query) {
           className += ' is-empty';
+        }
+        if (this.state.loading) {
+          className += ' is-loading';
         }
         if (this.state.selected.length) {
           className += ' has-value';
@@ -347,6 +351,9 @@
           clearTimeout(self.queryTimeout);
 
           self.queryTimeout = setTimeout(function () {
+            self.setState({
+              loading: true
+            });
             self.props.search(query, function (err, results) {
               var cache = self.state.cache;
               if (self.props.cache) {
@@ -354,7 +361,8 @@
               }
               self.setState({
                 cachedResults: results,
-                cache: cache
+                cache: cache,
+                loading: false
               });
             });
           }, self.props.delay);
