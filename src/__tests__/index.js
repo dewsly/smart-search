@@ -302,6 +302,14 @@ describe('Full DOM Rendering', () => {
 
   });
 
+  it('should immediately trigger props.search when props.autofocus == 1', () => {
+    const search = sinon.spy();
+    const wrapper = mount(<SmartSearch autoload={true} search={search} />);
+    setTimeout(function () {
+      expect(search.callCount).to.equal(1);
+    }, 0);
+  });
+
   it('should not trigger props.search when searching for a cached query', () => {
     const search = sinon.stub().callsArgWith(1, null, {"label":"Users", "items":results});
 
@@ -334,7 +342,7 @@ describe('Full DOM Rendering', () => {
       );
     };
 
-    const wrapper = mount(<SmartSearch results={results} cache={true} renderItem={renderItem} />);
+    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} renderItem={renderItem} />);
     wrapper.find('#item-1').first().closest('.ss-item').simulate('click');
     expect(wrapper.state().selected).to.have.length(1);
     expect(wrapper.find('#item-1')).to.have.length(0);

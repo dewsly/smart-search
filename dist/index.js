@@ -94,6 +94,7 @@
         selected: [],
         query: _this.props.query,
         focused: false,
+        open: false,
         highlightIndex: 0,
         cache: {},
         cachedResults: null
@@ -118,6 +119,13 @@
         }
       }
     }, {
+      key: 'componentDidMount',
+      value: function componentDidMount() {
+        if (this.props.autoload && this.props.search) {
+          this._onQueryChange('');
+        }
+      }
+    }, {
       key: '_focus',
       value: function _focus() {
         if (this._input) {
@@ -126,11 +134,32 @@
         }
       }
     }, {
+      key: '_blur',
+      value: function _blur() {
+        if (this._input) {
+          this._input.blur();
+          this._onBlur();
+        }
+      }
+    }, {
+      key: '_toggleOpen',
+      value: function _toggleOpen() {
+        if (this.props.searchable) {
+          return;
+        }
+        this.setState({
+          open: !this.state.open
+        });
+      }
+    }, {
       key: '_getComponentClass',
       value: function _getComponentClass() {
         var className = 'smart-search';
         if (this.state.focused) {
-          className += ' is-focused is-open';
+          className += ' is-focused';
+        }
+        if (this.state.open) {
+          className += ' is-open';
         }
         if (!this.state.query) {
           className += ' is-empty';
@@ -163,6 +192,9 @@
       key: '_getResults',
       value: function _getResults() {
         var self = this;
+        if (!this.props.search) {
+          return this.props.results;
+        }
         var results = this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
 
         // remove any selected results from the set:
@@ -235,7 +267,8 @@
         clearTimeout(this._focusTimeout);
         this._focusTimeout = setTimeout(function () {
           self.setState({
-            focused: false
+            focused: false,
+            open: false
           });
         }, 200);
       }
@@ -246,8 +279,12 @@
         clearTimeout(this._focusTimeout);
         this._focusTimeout = setTimeout(function () {
           self.setState({
-            focused: true
+            focused: true,
+            open: true
           });
+          if (self._results) {
+            self._results.scrollTop = 0;
+          }
         }, 100);
       }
     }, {
@@ -292,7 +329,7 @@
         });
 
         // determine if query value length is >= props.minCharacters
-        if (query.length < this.props.minCharacters) {
+        if (!this.props.autoload && query.length < this.props.minCharacters) {
           return;
         }
 
@@ -396,12 +433,16 @@
           }
           selected = [item];
         }
-        this.setState({
+        var updatedState = {
           selected: selected,
           query: '',
-          cachedResults: [],
           highlightIndex: 0
-        });
+        };
+        if (this.props.multi) {
+          updatedState.cachedResults = [];
+        }
+        this.setState(updatedState);
+
         if (removedItem && this.props.onRemove) {
           this.props.onRemove(removedItem, selected);
         }
@@ -455,6 +496,9 @@
                 },
                 title: this._renderLabel(),
                 value: this.state.query,
+                onClick: function onClick(e) {
+                  _this2._toggleOpen();
+                },
                 onChange: function onChange(e) {
                   _this2._handleChange(e);
                 },
@@ -471,7 +515,10 @@
           ),
           _react2.default.createElement(
             'div',
-            { className: 'ss-results' },
+            { className: 'ss-results',
+              ref: function ref(e) {
+                _this2._results = e;
+              } },
             _results && _results.map(function (results, i) {
               return _react2.default.createElement(
                 'div',
@@ -521,7 +568,8 @@
     selected: _react2.default.PropTypes.array,
     focusAfterSelect: _react2.default.PropTypes.bool,
     focusAfterRemove: _react2.default.PropTypes.bool,
-    searchable: _react2.default.PropTypes.bool
+    searchable: _react2.default.PropTypes.bool,
+    autoload: _react2.default.PropTypes.bool
   };
   SmartSearch.defaultProps = {
     query: '',
@@ -533,7 +581,8 @@
     selected: [],
     focusAfterSelect: true,
     focusAfterRemove: true,
-    searchable: true
+    searchable: true,
+    autoload: false
   };
   exports.default = SmartSearch;
 });

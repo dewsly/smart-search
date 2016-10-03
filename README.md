@@ -116,6 +116,11 @@
 
 **Description:** Specify whether or not the smart-search field should execute a search on change (default: true)
 
+### `searchable`
+**Type:** Boolean
+
+**Description:** Specify whether or not to trigger the search on initial mount (default: false)
+
 ## Results Array
 The results are expected to be an array of 0+ groups. Each group should have a `label` that will be used as the group heading in the render (unless `showGroupHeading` is falsy) and an array of `items`, which represent the selectable items within a group.
 

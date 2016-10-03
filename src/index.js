@@ -17,6 +17,7 @@ class SmartSearch extends React.Component {
       selected: [],
       query: this.props.query,
       focused: false,
+      open: false,
       highlightIndex: 0,
       cache: {},
       cachedResults: null
@@ -38,6 +39,12 @@ class SmartSearch extends React.Component {
     }
   }
 
+  componentDidMount() {
+    if (this.props.autoload && this.props.search) {
+      this._onQueryChange('');
+    }
+  }
+
   _focus() {
     if (this._input) {
       this._input.focus();
@@ -45,10 +52,27 @@ class SmartSearch extends React.Component {
     }
   }
 
+  _blur() {
+    if (this._input) {
+      this._input.blur();
+      this._onBlur();
+    }
+  }
+
+  _toggleOpen() {
+    if (this.props.searchable) { return; }
+    this.setState({
+      open: !this.state.open
+    });
+  }
+
   _getComponentClass() {
     let className = 'smart-search';
     if (this.state.focused) {
-      className += ' is-focused is-open';
+      className += ' is-focused';
+    }
+    if (this.state.open) {
+      className += ' is-open';
     }
     if (!this.state.query) {
       className += ' is-empty';
@@ -79,6 +103,9 @@ class SmartSearch extends React.Component {
 
   _getResults() {
     let self = this;
+    if (!this.props.search) {
+      return this.props.results;
+    }
     let results = this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
 
     // remove any selected results from the set:
@@ -145,7 +172,8 @@ class SmartSearch extends React.Component {
     clearTimeout(this._focusTimeout);
     this._focusTimeout = setTimeout(function () {
       self.setState({
-        focused: false
+        focused: false,
+        open: false
       });
     }, 200);
   }
@@ -155,8 +183,12 @@ class SmartSearch extends React.Component {
     clearTimeout(this._focusTimeout);
     this._focusTimeout = setTimeout(function () {
       self.setState({
-        focused: true
+        focused: true,
+        open: true
       });
+      if (self._results) {
+        self._results.scrollTop = 0;
+      }
     }, 100);
   }
 
@@ -199,7 +231,7 @@ class SmartSearch extends React.Component {
     });
 
     // determine if query value length is >= props.minCharacters
-    if (query.length < this.props.minCharacters) {
+    if (!this.props.autoload && query.length < this.props.minCharacters) {
       return;
     }
 
@@ -297,12 +329,16 @@ class SmartSearch extends React.Component {
       }
       selected = [item];
     }
-    this.setState({
+    let updatedState = {
       selected: selected,
       query: '',
-      cachedResults: [],
       highlightIndex: 0
-    });
+    };
+    if (this.props.multi) {
+      updatedState.cachedResults = [];
+    }
+    this.setState(updatedState);
+
     if (removedItem && this.props.onRemove) {
       this.props.onRemove(removedItem, selected);
     }
@@ -338,13 +374,15 @@ class SmartSearch extends React.Component {
               ref={(e) => { this._input = e; }}
               title={this._renderLabel()}
               value={this.state.query}
+              onClick={(e) => { this._toggleOpen(); }}
               onChange={(e) => { this._handleChange(e); }}
               onFocus={() => { this._onFocus(); }}
               onBlur={() => { this._onBlur(); }}
               onKeyDown={(e) => { this._onKeyDown(e); }} />
           </div>
         </div>
-        <div className="ss-results">
+        <div className="ss-results"
+             ref={(e) => { this._results = e; }}>
           {_results && _results.map((results, i) =>
             <div
               className="ss-group"
@@ -384,7 +422,8 @@ SmartSearch.propTypes = {
   selected: React.PropTypes.array,
   focusAfterSelect: React.PropTypes.bool,
   focusAfterRemove: React.PropTypes.bool,
-  searchable: React.PropTypes.bool
+  searchable: React.PropTypes.bool,
+  autoload: React.PropTypes.bool
 };
 SmartSearch.defaultProps = {
   query: '',
@@ -396,6 +435,7 @@ SmartSearch.defaultProps = {
   selected: [],
   focusAfterSelect: true,
   focusAfterRemove: true,
-  searchable: true
+  searchable: true,
+  autoload: false
 };
 export default SmartSearch;
