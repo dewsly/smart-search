@@ -127,6 +127,12 @@
         }
       }
     }, {
+      key: 'componentWillUnmount',
+      value: function componentWillUnmount() {
+        clearTimeout(this._queryTimeout);
+        clearTimeout(this._focusTimeout);
+      }
+    }, {
       key: '_focus',
       value: function _focus() {
         if (this._input) {
@@ -348,9 +354,9 @@
         if (this.props.search) {
           var self = this;
 
-          clearTimeout(self.queryTimeout);
+          clearTimeout(self._queryTimeout);
 
-          self.queryTimeout = setTimeout(function () {
+          self._queryTimeout = setTimeout(function () {
             self.setState({
               loading: true
             });

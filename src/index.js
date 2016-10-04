@@ -46,6 +46,11 @@ class SmartSearch extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    clearTimeout(this._queryTimeout);
+    clearTimeout(this._focusTimeout);
+  }
+
   _focus() {
     if (this._input) {
       this._input.focus();
@@ -250,9 +255,9 @@ class SmartSearch extends React.Component {
     if (this.props.search) {
       var self = this;
 
-      clearTimeout(self.queryTimeout);
+      clearTimeout(self._queryTimeout);
 
-      self.queryTimeout = setTimeout(function () {
+      self._queryTimeout = setTimeout(function () {
         self.setState({
           loading: true
         });
