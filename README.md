@@ -27,6 +27,7 @@
   focusAfterSelect={Boolean}
   focusAfterRemove={Boolean}
   searchable={Boolean}
+  autoload={Boolean}
 />
 ```
 
@@ -116,7 +117,7 @@
 
 **Description:** Specify whether or not the smart-search field should execute a search on change (default: true)
 
-### `searchable`
+### `autoload`
 **Type:** Boolean
 
 **Description:** Specify whether or not to trigger the search on initial mount (default: false)
