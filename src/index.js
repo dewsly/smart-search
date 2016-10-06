@@ -19,7 +19,7 @@ class SmartSearch extends React.Component {
       focused: false,
       open: false,
       loading: false,
-      highlightIndex: 0,
+      highlightIndex: -1,
       cache: {},
       cachedResults: null
     };
@@ -43,6 +43,10 @@ class SmartSearch extends React.Component {
   componentDidMount() {
     if (this.props.autoload && this.props.search) {
       this._onQueryChange('');
+    }
+
+    if (this.props.focusOnMount && this._input) {
+      this._input.focus();
     }
   }
 
@@ -185,6 +189,8 @@ class SmartSearch extends React.Component {
         open: false
       });
     }, 200);
+
+    if (this.props.onBlur) { this.props.onBlur(); }
   }
 
   _onFocus() {
@@ -199,6 +205,8 @@ class SmartSearch extends React.Component {
         self._results.scrollTop = 0;
       }
     }, 100);
+
+    if (this.props.onFocus) { this.props.onFocus(); }
   }
 
   _onKeyDown(e) {
@@ -449,6 +457,7 @@ SmartSearch.defaultProps = {
   focusAfterSelect: true,
   focusAfterRemove: true,
   searchable: true,
-  autoload: false
+  autoload: false,
+  focusOnMount: false
 };
 export default SmartSearch;

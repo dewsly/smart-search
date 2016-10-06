@@ -96,7 +96,7 @@
         focused: false,
         open: false,
         loading: false,
-        highlightIndex: 0,
+        highlightIndex: -1,
         cache: {},
         cachedResults: null
       };
@@ -124,6 +124,10 @@
       value: function componentDidMount() {
         if (this.props.autoload && this.props.search) {
           this._onQueryChange('');
+        }
+
+        if (this.props.focusOnMount && this._input) {
+          this._input.focus();
         }
       }
     }, {
@@ -281,6 +285,10 @@
             open: false
           });
         }, 200);
+
+        if (this.props.onBlur) {
+          this.props.onBlur();
+        }
       }
     }, {
       key: '_onFocus',
@@ -296,6 +304,10 @@
             self._results.scrollTop = 0;
           }
         }, 100);
+
+        if (this.props.onFocus) {
+          this.props.onFocus();
+        }
       }
     }, {
       key: '_onKeyDown',
@@ -596,7 +608,8 @@
     focusAfterSelect: true,
     focusAfterRemove: true,
     searchable: true,
-    autoload: false
+    autoload: false,
+    focusOnMount: false
   };
   exports.default = SmartSearch;
 });

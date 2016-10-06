@@ -28,6 +28,9 @@
   focusAfterRemove={Boolean}
   searchable={Boolean}
   autoload={Boolean}
+  onBlur={Function}
+  onFocus={Function}
+  focusOnMount={Boolean}
 />
 ```
 
@@ -121,6 +124,21 @@
 **Type:** Boolean
 
 **Description:** Specify whether or not to trigger the search on initial mount (default: false)
+
+### `onBlur`
+**Type:** function
+
+**Description:** Callback when focus on search field has blurred
+
+### `onFocus`
+**Type:** Function
+
+**Description:** Callback when search field has received focus
+
+### `focusOnMount`
+**Type:** Boolean
+
+**Description:** Specify whether the search field should be focused initially (default: false)
 
 ## Results Array
 The results are expected to be an array of 0+ groups. Each group should have a `label` that will be used as the group heading in the render (unless `showGroupHeading` is falsy) and an array of `items`, which represent the selectable items within a group.
