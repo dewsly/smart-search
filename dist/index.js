@@ -88,7 +88,7 @@
        * @property {bool} focused boolean indicating whether input is focused
        * @property {int} highlightIndex int indicate which result should be highlighted
        * @property {object} cache object map of query -> results
-       * @property {array} cachedResults array of resuilts to use when caching enabled
+       * @property {array} cachedResults array of results to use when caching enabled
        */
       _this.state = {
         selected: [],
@@ -128,6 +128,14 @@
 
         if (this.props.focusOnMount && this._input) {
           this._input.focus();
+        }
+
+        if (this.props.selected) {
+          for (var i = 0, len = this.props.selected.length; i < len; i++) {
+            if (!this._isSelected(this.props.selected[i])) {
+              this._selectItem(this.props.selected[i]);
+            }
+          }
         }
       }
     }, {
@@ -462,7 +470,7 @@
         var updatedState = {
           selected: selected,
           query: '',
-          highlightIndex: 0
+          highlightIndex: -1
         };
         if (this.props.multi) {
           updatedState.cachedResults = [];
