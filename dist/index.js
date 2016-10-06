@@ -206,7 +206,7 @@
       key: '_getResults',
       value: function _getResults() {
         var self = this;
-        if (!this.props.search) {
+        if (!this.props.search || !this.props.filterSelected) {
           return this.props.results;
         }
         var results = this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
@@ -284,11 +284,11 @@
             focused: false,
             open: false
           });
-        }, 200);
 
-        if (this.props.onBlur) {
-          this.props.onBlur();
-        }
+          if (self.props.onBlur) {
+            self.props.onBlur();
+          }
+        }, 200);
       }
     }, {
       key: '_onFocus',
@@ -303,11 +303,11 @@
           if (self._results) {
             self._results.scrollTop = 0;
           }
-        }, 100);
 
-        if (this.props.onFocus) {
-          this.props.onFocus();
-        }
+          if (self.props.onFocus) {
+            self.props.onFocus();
+          }
+        }, 100);
       }
     }, {
       key: '_onKeyDown',
@@ -595,7 +595,11 @@
     focusAfterSelect: _react2.default.PropTypes.bool,
     focusAfterRemove: _react2.default.PropTypes.bool,
     searchable: _react2.default.PropTypes.bool,
-    autoload: _react2.default.PropTypes.bool
+    autoload: _react2.default.PropTypes.bool,
+    focusOnMount: _react2.default.PropTypes.bool,
+    filterSelected: _react2.default.PropTypes.bool,
+    onFocus: _react2.default.PropTypes.func,
+    onBlur: _react2.default.PropTypes.func
   };
   SmartSearch.defaultProps = {
     query: '',
@@ -609,7 +613,8 @@
     focusAfterRemove: true,
     searchable: true,
     autoload: false,
-    focusOnMount: false
+    focusOnMount: false,
+    filterSelected: true
   };
   exports.default = SmartSearch;
 });

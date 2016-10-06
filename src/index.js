@@ -116,7 +116,7 @@ class SmartSearch extends React.Component {
 
   _getResults() {
     let self = this;
-    if (!this.props.search) {
+    if (!this.props.search || !this.props.filterSelected) {
       return this.props.results;
     }
     let results = this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
@@ -188,9 +188,9 @@ class SmartSearch extends React.Component {
         focused: false,
         open: false
       });
-    }, 200);
 
-    if (this.props.onBlur) { this.props.onBlur(); }
+      if (self.props.onBlur) { self.props.onBlur(); }
+    }, 200);
   }
 
   _onFocus() {
@@ -204,9 +204,9 @@ class SmartSearch extends React.Component {
       if (self._results) {
         self._results.scrollTop = 0;
       }
-    }, 100);
 
-    if (this.props.onFocus) { this.props.onFocus(); }
+      if (self.props.onFocus) { self.props.onFocus(); }
+    }, 100);
   }
 
   _onKeyDown(e) {
@@ -444,7 +444,11 @@ SmartSearch.propTypes = {
   focusAfterSelect: React.PropTypes.bool,
   focusAfterRemove: React.PropTypes.bool,
   searchable: React.PropTypes.bool,
-  autoload: React.PropTypes.bool
+  autoload: React.PropTypes.bool,
+  focusOnMount: React.PropTypes.bool,
+  filterSelected: React.PropTypes.bool,
+  onFocus: React.PropTypes.func,
+  onBlur: React.PropTypes.func
 };
 SmartSearch.defaultProps = {
   query: '',
@@ -458,6 +462,7 @@ SmartSearch.defaultProps = {
   focusAfterRemove: true,
   searchable: true,
   autoload: false,
-  focusOnMount: false
+  focusOnMount: false,
+  filterSelected: true
 };
 export default SmartSearch;
