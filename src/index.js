@@ -61,6 +61,7 @@ class SmartSearch extends React.Component {
   componentWillUnmount() {
     clearTimeout(this._queryTimeout);
     clearTimeout(this._focusTimeout);
+    clearTimeout(this._highlightTimeout);
   }
 
   _focus() {
@@ -169,6 +170,18 @@ class SmartSearch extends React.Component {
     this.setState({
       highlightIndex: index + 1
     });
+
+    var self = this;
+    clearTimeout(this._highlightTimeout);
+    this._highlightTimeout = setTimeout(function () {
+      if (self._highlightedItem) {
+        if (self._highlightedItem.scrollIntoViewIfNeeded) {
+          self._highlightedItem.scrollIntoViewIfNeeded();
+        } else {
+          self._highlightedItem.scrollIntoView();
+        }
+      }
+    }, 0);
   }
 
   _highlightPreviousResult() {
@@ -179,6 +192,18 @@ class SmartSearch extends React.Component {
     this.setState({
       highlightIndex: index - 1
     });
+
+    var self = this;
+    clearTimeout(this._highlightTimeout);
+    this._highlightTimeout = setTimeout(function () {
+      if (self._highlightedItem) {
+        if (self._highlightedItem.scrollIntoViewIfNeeded) {
+          self._highlightedItem.scrollIntoViewIfNeeded();
+        } else {
+          self._highlightedItem.scrollIntoView();
+        }
+      }
+    }, 0);
   }
 
   _isSelected(item) {
@@ -421,6 +446,7 @@ class SmartSearch extends React.Component {
               {results.items && results.items.map((result, j) =>
                 <div
                   className={this._getItemClass(j)}
+                  ref={(e) => { if(this.state.highlightIndex === j) { this._highlightedItem = e; }}}
                   key={j}
                   onClick={() => {this._selectItem(result)}}>
                   {this._renderItem(result)}

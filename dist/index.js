@@ -143,6 +143,7 @@
       value: function componentWillUnmount() {
         clearTimeout(this._queryTimeout);
         clearTimeout(this._focusTimeout);
+        clearTimeout(this._highlightTimeout);
       }
     }, {
       key: '_focus',
@@ -262,6 +263,18 @@
         this.setState({
           highlightIndex: index + 1
         });
+
+        var self = this;
+        clearTimeout(this._highlightTimeout);
+        this._highlightTimeout = setTimeout(function () {
+          if (self._highlightedItem) {
+            if (self._highlightedItem.scrollIntoViewIfNeeded) {
+              self._highlightedItem.scrollIntoViewIfNeeded();
+            } else {
+              self._highlightedItem.scrollIntoView();
+            }
+          }
+        }, 0);
       }
     }, {
       key: '_highlightPreviousResult',
@@ -273,6 +286,18 @@
         this.setState({
           highlightIndex: index - 1
         });
+
+        var self = this;
+        clearTimeout(this._highlightTimeout);
+        this._highlightTimeout = setTimeout(function () {
+          if (self._highlightedItem) {
+            if (self._highlightedItem.scrollIntoViewIfNeeded) {
+              self._highlightedItem.scrollIntoViewIfNeeded();
+            } else {
+              self._highlightedItem.scrollIntoView();
+            }
+          }
+        }, 0);
       }
     }, {
       key: '_isSelected',
@@ -569,6 +594,11 @@
                     'div',
                     {
                       className: _this2._getItemClass(j),
+                      ref: function ref(e) {
+                        if (_this2.state.highlightIndex === j) {
+                          _this2._highlightedItem = e;
+                        }
+                      },
                       key: j,
                       onClick: function onClick() {
                         _this2._selectItem(result);
