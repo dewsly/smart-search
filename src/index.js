@@ -322,7 +322,7 @@ class SmartSearch extends React.Component {
 
   _selectHighlighted() {
     let results = this._getResults();
-    if (!results || !results.length) {
+    if (!results || !results.length || this.state.highlightIndex < 0) {
       return;
     }
 

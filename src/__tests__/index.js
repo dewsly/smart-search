@@ -348,4 +348,19 @@ describe('Full DOM Rendering', () => {
     expect(wrapper.find('#item-1')).to.have.length(0);
   });
 
+  it('highlights option selected with keyboard', () => {
+    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} />);
+    wrapper.find('input[type="text"]').simulate('click');
+    wrapper.find('input[type="text"]').simulate('keyDown', {which:40});
+    expect(wrapper.state().highlightIndex).to.equal(0);
+  });
+
+  it('should not select item when pressing enter key on highlightIndex -1', () => {
+    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} />);
+    wrapper.find('input[type="text"]').simulate('click');
+    expect(wrapper.state().highlightIndex).to.equal(-1);
+    wrapper.find('input[type="text"]').simulate('keyDown', {which:13});
+    expect(wrapper.state().selected).to.have.length(0);
+  });
+
 });

@@ -430,7 +430,7 @@
       key: '_selectHighlighted',
       value: function _selectHighlighted() {
         var results = this._getResults();
-        if (!results || !results.length) {
+        if (!results || !results.length || this.state.highlightIndex < 0) {
           return;
         }
 
