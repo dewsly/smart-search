@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 
 class SmartSearch extends React.Component {
 
@@ -86,32 +87,18 @@ class SmartSearch extends React.Component {
   }
 
   _getComponentClass() {
-    let className = 'smart-search';
-    if (this.state.focused) {
-      className += ' is-focused';
-    }
-    if (this.state.open) {
-      className += ' is-open';
-    }
-    if (!this.state.query) {
-      className += ' is-empty';
-    }
-    if (this.state.loading) {
-      className += ' is-loading';
-    }
-    if (this.state.selected.length) {
-      className += ' has-value';
-    }
-    if (this.props.multi) {
-      className += ' multi';
-    } else {
-      className += ' single';
-    }
-    if (this.props.searchable) {
-      className += ' searchable';
-    } else {
-      className += ' not-searchable';
-    }
+    let className = classNames('smart-search', {
+      'is-focused': this.state.focused,
+      'is-open': this.state.open,
+      'is-empty': !this.state.query,
+      'is-loading': this.state.loading,
+      'has-value': this.state.selected.length,
+      'multi': this.props.multi,
+      'single': !this.props.multi,
+      'searchable': this.props.searchable,
+      'not-searchable': !this.props.searchable
+    });
+
     return className;
   }
 
