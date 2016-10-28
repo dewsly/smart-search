@@ -67,6 +67,25 @@ describe('Shallow Rendering', () => {
     expect(wrapper.find('.smart-search.single')).to.have.length(1);
   });
 
+  it('adds .has-results class when there are results', () => {
+    const wrapper = shallow(<SmartSearch results={results} />);
+    expect(wrapper.find('.smart-search.has-results')).to.have.length(1);
+  });
+
+  it('does not have .has-results class when no results', () => {
+    const wrapper = shallow(<SmartSearch />);
+    expect(wrapper.find('.smart-search.has-results')).to.have.length(0);
+
+    wrapper.setProps({
+      results:[{
+        'key': 'people',
+        'label': 'People',
+        'items': []
+      }]
+    });
+    expect(wrapper.find('.smart-search.has-results')).to.have.length(0);
+  });
+
   it('to have 0 .ss-group elements when no results', () => {
     const wrapper = shallow(<SmartSearch />);
   });

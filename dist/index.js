@@ -1,16 +1,16 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define(['exports', 'react'], factory);
+    define(['exports', 'react', 'classnames'], factory);
   } else if (typeof exports !== "undefined") {
-    factory(exports, require('react'));
+    factory(exports, require('react'), require('classnames'));
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, global.react);
+    factory(mod.exports, global.react, global.classnames);
     global.index = mod.exports;
   }
-})(this, function (exports, _react) {
+})(this, function (exports, _react, _classnames) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -18,6 +18,8 @@
   });
 
   var _react2 = _interopRequireDefault(_react);
+
+  var _classnames2 = _interopRequireDefault(_classnames);
 
   function _interopRequireDefault(obj) {
     return obj && obj.__esModule ? obj : {
@@ -174,32 +176,19 @@
     }, {
       key: '_getComponentClass',
       value: function _getComponentClass() {
-        var className = 'smart-search';
-        if (this.state.focused) {
-          className += ' is-focused';
-        }
-        if (this.state.open) {
-          className += ' is-open';
-        }
-        if (!this.state.query) {
-          className += ' is-empty';
-        }
-        if (this.state.loading) {
-          className += ' is-loading';
-        }
-        if (this.state.selected.length) {
-          className += ' has-value';
-        }
-        if (this.props.multi) {
-          className += ' multi';
-        } else {
-          className += ' single';
-        }
-        if (this.props.searchable) {
-          className += ' searchable';
-        } else {
-          className += ' not-searchable';
-        }
+        var className = (0, _classnames2.default)('smart-search', {
+          'is-focused': this.state.focused,
+          'is-open': this.state.open,
+          'is-empty': !this.state.query,
+          'is-loading': this.state.loading,
+          'has-value': this.state.selected.length,
+          'multi': this.props.multi,
+          'single': !this.props.multi,
+          'searchable': this.props.searchable,
+          'not-searchable': !this.props.searchable,
+          'has-results': this._getResultCount()
+        });
+
         return className;
       }
     }, {
