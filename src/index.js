@@ -96,7 +96,8 @@ class SmartSearch extends React.Component {
       'multi': this.props.multi,
       'single': !this.props.multi,
       'searchable': this.props.searchable,
-      'not-searchable': !this.props.searchable
+      'not-searchable': !this.props.searchable,
+      'has-results': this._getResults().length
     });
 
     return className;
