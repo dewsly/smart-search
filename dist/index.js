@@ -186,7 +186,7 @@
           'single': !this.props.multi,
           'searchable': this.props.searchable,
           'not-searchable': !this.props.searchable,
-          'has-results': this._getResults().length
+          'has-results': this._getResultCount()
         });
 
         return className;
