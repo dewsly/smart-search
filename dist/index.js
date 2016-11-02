@@ -110,9 +110,18 @@
     _createClass(SmartSearch, [{
       key: 'componentWillReceiveProps',
       value: function componentWillReceiveProps(nextProps) {
-        if (nextProps.query !== this.props.query) {
+        if (this._hasChanged(this.props.query, nextProps.query)) {
           this._onQueryChange(nextProps.query);
         }
+
+        if (this._hasChanged(this.props.selected, nextProps.selected)) {
+          this.setState({ selected: nextProps.selected });
+        }
+      }
+    }, {
+      key: '_hasChanged',
+      value: function _hasChanged(oldValue, newValue) {
+        return JSON.stringify(oldValue) !== JSON.stringify(newValue);
       }
     }, {
       key: 'componentDidMount',
