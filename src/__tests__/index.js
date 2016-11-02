@@ -382,4 +382,27 @@ describe('Full DOM Rendering', () => {
     expect(wrapper.state().selected).to.have.length(0);
   });
 
+  it('should handle and render pre-selected items', () => {
+    const onRemove = sinon.spy();
+    const selected = results[0].items;
+    expect(selected).to.have.length(2);
+    const wrapper = mount(<SmartSearch search={() => {}} selected={selected} results={results} onRemove={onRemove} cache={true} multi={true} />);
+    expect(onRemove.callCount).to.equal(0);
+    expect(wrapper.find('.ss-selected-item')).to.have.length(2);
+    expect(wrapper.state().selected).to.equal(selected);
+  });
+
+  it('should handle multiple add and removes at a time with pre-selected items', () => {
+    const onRemove = sinon.spy();
+    const selected = results[0].items;
+    expect(selected).to.have.length(2);
+    const wrapper = mount(<SmartSearch search={() => {}} selected={selected} results={results} onRemove={onRemove} cache={true} multi={true} />);
+    expect(wrapper.find('.ss-selected-item')).to.have.length(2);
+    wrapper.find('.ss-selected-item').first().simulate('click');
+    expect(onRemove.callCount).to.equal(1);
+    wrapper.find('.ss-item').first().simulate('click');
+    wrapper.find('.ss-selected-item').first().simulate('click');
+    expect(onRemove.callCount).to.equal(2);
+  });
+
 });

@@ -113,13 +113,6 @@
         if (nextProps.query !== this.props.query) {
           this._onQueryChange(nextProps.query);
         }
-        if (nextProps.selected && nextProps.selected.length) {
-          for (var i = 0, len = nextProps.selected.length; i < len; i++) {
-            if (!this._isSelected(nextProps.selected[i])) {
-              this._selectItem(nextProps.selected[i]);
-            }
-          }
-        }
       }
     }, {
       key: 'componentDidMount',
@@ -133,11 +126,7 @@
         }
 
         if (this.props.selected) {
-          for (var i = 0, len = this.props.selected.length; i < len; i++) {
-            if (!this._isSelected(this.props.selected[i])) {
-              this._selectItem(this.props.selected[i]);
-            }
-          }
+          this.setState({ selected: this.props.selected });
         }
       }
     }, {
@@ -469,15 +458,15 @@
         var removedItem = null;
 
         if (this.props.multi) {
-          var alreadyExists = this.state.selected.reduce(function (previous, current) {
+          var alreadyExists = selected.reduce(function (previous, current) {
             return previous || current.id == item.id;
           }, false);
           if (!alreadyExists) {
-            selected = this.state.selected.concat([item]);
+            selected = selected.concat([item]);
           }
         } else {
-          if (this.state.selected.length) {
-            removedItem = this.state.selected[0];
+          if (selected.length) {
+            removedItem = selected[0];
           }
           selected = [item];
         }
