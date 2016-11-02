@@ -405,14 +405,4 @@ describe('Full DOM Rendering', () => {
     expect(onRemove.callCount).to.equal(2);
   });
 
-  it('should handle null results prop', () => {
-    const wrapper = mount(<SmartSearch results={null} />);
-    expect(wrapper.state().results).to.be.an('undefined');
-  });
-
-  it('should handle null selected prop', () => {
-    const wrapper = mount(<SmartSearch selected={null} />);
-    expect(wrapper.state().selected).to.be.an('array').and.have.length(0);
-  });
-
 });

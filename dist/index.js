@@ -126,7 +126,7 @@
         }
 
         if (this.props.selected) {
-          this.setState({ selected: this.props.selected || [] });
+          this.setState({ selected: this.props.selected });
         }
       }
     }, {
@@ -218,10 +218,9 @@
     }, {
       key: '_getResultCount',
       value: function _getResultCount() {
-        var results = this._getResults();
-        return results ? results.reduce(function (previous, current) {
+        return this._getResults().reduce(function (previous, current) {
           return previous + (current && current.items ? current.items.length : 0);
-        }, 0) : 0;
+        }, 0);
       }
     }, {
       key: '_handleChange',
