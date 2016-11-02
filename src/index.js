@@ -44,7 +44,7 @@ class SmartSearch extends React.Component {
     }
 
     if (this.props.selected) {
-      this.setState({selected:this.props.selected});
+      this.setState({selected:this.props.selected || []});
     }
   }
 
@@ -126,9 +126,10 @@ class SmartSearch extends React.Component {
   }
 
   _getResultCount() {
-    return this._getResults().reduce((previous, current) => {
+    let results = this._getResults();
+    return results ? results.reduce((previous, current) => {
       return previous + (current && current.items ? current.items.length : 0);
-    }, 0);
+    }, 0) : 0;
   }
 
   _handleChange(event) {
