@@ -405,4 +405,10 @@ describe('Full DOM Rendering', () => {
     expect(onRemove.callCount).to.equal(2);
   });
 
+  it('should update selected after mount', () => {
+    const wrapper = mount(<SmartSearch selected={[]} />);
+    expect(wrapper.state().selected).to.have.length(0);
+    wrapper.setProps({selected: results[0].items});
+    expect(wrapper.state().selected).to.have.length(results[0].items.length);
+  });
 });
