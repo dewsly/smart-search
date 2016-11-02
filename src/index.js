@@ -45,14 +45,6 @@ class SmartSearch extends React.Component {
 
     if (this.props.selected) {
       this.setState({selected:this.props.selected});
-      /*
-      for(var i=0, len=this.props.selected.length; i<len; i++) {
-        if (!this._isSelected(this.props.selected[i])) {
-          console.log('selecting item!');
-          this._selectItem(this.props.selected[i]);
-        }
-      }
-      */
     }
   }
 
