@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+import objectAssign from 'object-assign';
 
 class SmartSearch extends React.Component {
 
@@ -124,7 +125,7 @@ class SmartSearch extends React.Component {
       let filteredItems = group.items.filter((result) => {
         return !self._isSelected(result);
       });
-      let updated = Object.assign({}, group);
+      let updated = objectAssign({}, group);
       updated.items = filteredItems;
 
       return updated;

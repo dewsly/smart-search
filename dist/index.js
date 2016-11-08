@@ -1,16 +1,16 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define(['exports', 'react', 'classnames'], factory);
+    define(['exports', 'react', 'classnames', 'object-assign'], factory);
   } else if (typeof exports !== "undefined") {
-    factory(exports, require('react'), require('classnames'));
+    factory(exports, require('react'), require('classnames'), require('object-assign'));
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, global.react, global.classnames);
+    factory(mod.exports, global.react, global.classnames, global.objectAssign);
     global.index = mod.exports;
   }
-})(this, function (exports, _react, _classnames) {
+})(this, function (exports, _react, _classnames, _objectAssign) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -20,6 +20,8 @@
   var _react2 = _interopRequireDefault(_react);
 
   var _classnames2 = _interopRequireDefault(_classnames);
+
+  var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
   function _interopRequireDefault(obj) {
     return obj && obj.__esModule ? obj : {
@@ -216,7 +218,7 @@
           var filteredItems = group.items.filter(function (result) {
             return !self._isSelected(result);
           });
-          var updated = Object.assign({}, group);
+          var updated = (0, _objectAssign2.default)({}, group);
           updated.items = filteredItems;
 
           return updated;
