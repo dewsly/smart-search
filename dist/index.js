@@ -591,7 +591,7 @@
                           _this2._highlightedItem = e;
                         }
                       },
-                      key: results.key ? results.key + '.' + j : j + '.' + time,
+                      key: (results.key || _this2.state.query.trim().replace(/\s/g, '-')) + '.' + j,
                       onClick: function onClick() {
                         _this2._selectItem(result);
                       } },

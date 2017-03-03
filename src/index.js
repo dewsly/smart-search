@@ -436,7 +436,7 @@ class SmartSearch extends React.Component {
                 <div
                   className={this._getItemClass(j)}
                   ref={(e) => { if(this.state.highlightIndex === j) { this._highlightedItem = e; }}}
-                  key={results.key ? results.key + '.' + j : j + '.' + time}
+                  key={(results.key || this.state.query.trim().replace(/\s/g, '-')) + '.' + j}
                   onClick={() => {this._selectItem(result)}}>
                   {this._renderItem(result)}
                 </div>
