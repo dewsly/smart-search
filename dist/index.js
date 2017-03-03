@@ -509,7 +509,6 @@
         var _this2 = this;
 
         var _results = this._getResults();
-        var time = new Date().getTime();
         return _react2.default.createElement(
           'div',
           { className: this._getComponentClass() },

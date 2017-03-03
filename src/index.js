@@ -394,7 +394,6 @@ class SmartSearch extends React.Component {
 
   render() {
     let _results = this._getResults();
-    let time = new Date().getTime();
     return (
       <div className={this._getComponentClass()}>
         <label
