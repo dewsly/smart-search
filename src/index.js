@@ -428,7 +428,7 @@ class SmartSearch extends React.Component {
             <div
               className="ss-group"
               key={i}>
-              {this.props.showGroupHeading ?
+              {this.props.showGroupHeading && results.label ?
                 <h3 className="ss-group-heading">{results.label}</h3> : '' }
               {results.items && results.items.map((result, j) =>
                 <div

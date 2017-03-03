@@ -574,7 +574,7 @@
                 {
                   className: 'ss-group',
                   key: i },
-                _this2.props.showGroupHeading ? _react2.default.createElement(
+                _this2.props.showGroupHeading && results.label ? _react2.default.createElement(
                   'h3',
                   { className: 'ss-group-heading' },
                   results.label

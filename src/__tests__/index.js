@@ -219,10 +219,35 @@ describe('Shallow Rendering', () => {
     const wrapper = shallow(
       <SmartSearch
         showGroupHeading={false}
-        resluts={results} />
+        results={results} />
     );
     expect(wrapper.find('.ss-group-heading')).to.have.length(0);
   });
+
+  it('does not render group headings when no group label is provided', () => {
+    const noLabel = [
+      {
+        'key': 'people',
+        'items': [
+          {
+            'name': 'Alf',
+            'id': '1'
+          },
+          {
+            'name': 'Bananas',
+            'id': '2'
+          }
+        ]
+
+      }
+    ];
+    const wrapper = shallow(
+      <SmartSearch
+        showGroupHeading={true}
+        results={noLabel} />
+    );
+    expect(wrapper.find('.ss-group-heading')).to.have.length(0);
+  })
 
   it('only has one selected item when multi=false', () => {
     const wrapper = shallow(
@@ -253,6 +278,7 @@ describe('Shallow Rendering', () => {
     expect(onRemove.getCall(0).args[0]).to.have.property('id');
     expect(onRemove.getCall(0).args[0].id).to.equal(results[0].items[0].id);
   });
+
 });
 
 // Full DOM Rendering
