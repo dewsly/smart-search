@@ -372,6 +372,7 @@
         this.setState({
           query: query
         });
+        this.props.onQueryUpdated(query);
 
         // determine if query value length is >= props.minCharacters
         if (!this.props.autoload && query.length < this.props.minCharacters) {
@@ -508,6 +509,7 @@
         var _this2 = this;
 
         var _results = this._getResults();
+        var time = new Date().getTime();
         return _react2.default.createElement(
           'div',
           { className: this._getComponentClass() },
@@ -589,7 +591,7 @@
                           _this2._highlightedItem = e;
                         }
                       },
-                      key: j,
+                      key: results.key ? results.key + '.' + j : j + '.' + time,
                       onClick: function onClick() {
                         _this2._selectItem(result);
                       } },
@@ -627,7 +629,8 @@
     focusOnMount: _react2.default.PropTypes.bool,
     filterSelected: _react2.default.PropTypes.bool,
     onFocus: _react2.default.PropTypes.func,
-    onBlur: _react2.default.PropTypes.func
+    onBlur: _react2.default.PropTypes.func,
+    onQueryUpdated: _react2.default.PropTypes.func
   };
   SmartSearch.defaultProps = {
     query: '',
@@ -642,7 +645,8 @@
     searchable: true,
     autoload: false,
     focusOnMount: false,
-    filterSelected: true
+    filterSelected: true,
+    onQueryUpdated: function onQueryUpdated(query) {}
   };
   exports.default = SmartSearch;
 });
