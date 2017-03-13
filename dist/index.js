@@ -144,7 +144,7 @@
       key: 'componentWillUnmount',
       value: function componentWillUnmount() {
         clearTimeout(this._queryTimeout);
-        clearTimeout(this._focusTimeout);
+        clearTimeout(this._blurTimeout);
         clearTimeout(this._highlightTimeout);
       }
     }, {
@@ -301,13 +301,12 @@
       key: '_onBlur',
       value: function _onBlur() {
         var self = this;
-        clearTimeout(this._focusTimeout);
-        this._focusTimeout = setTimeout(function () {
+        clearTimeout(self._blurTimeout);
+        self._blurTimeout = setTimeout(function () {
           self.setState({
             focused: false,
             open: false
           });
-
           if (self.props.onBlur) {
             self.props.onBlur();
           }
@@ -316,21 +315,21 @@
     }, {
       key: '_onFocus',
       value: function _onFocus() {
-        var self = this;
-        clearTimeout(this._focusTimeout);
-        this._focusTimeout = setTimeout(function () {
-          self.setState({
-            focused: true,
-            open: true
-          });
-          if (self._results) {
-            self._results.scrollTop = 0;
-          }
+        clearTimeout(this._blurTimeout);
+        var stateObj = {
+          focused: true
+        };
+        if (this.props.searchable) {
+          stateObj.open = true;
+        }
+        this.setState(stateObj);
+        if (this._results) {
+          this._results.scrollTop = 0;
+        }
 
-          if (self.props.onFocus) {
-            self.props.onFocus();
-          }
-        }, 100);
+        if (this.props.onFocus) {
+          this.props.onFocus();
+        }
       }
     }, {
       key: '_onKeyDown',
@@ -340,25 +339,52 @@
         switch (e.which) {
           case 8:
             // delete
-            if (!this.state.query && this.state.selected.length) {
+            if (!this.state.query && this.state.selected.length && this.props.searchable) {
               this._removeItem(this.state.selected[this.state.selected.length - 1]);
+            }
+            break;
+          case 27:
+            // escape
+            stop = true;
+            if (!this.props.searchable) {
+              this.setState({ 'open': false });
+            }
+            break;
+          case 32:
+            // spacebar
+            if (this.state.highlightIndex != -1) {
+              this._selectHighlighted();
+            }
+            if (!this.props.searchable) {
+              stop = true;
+              this._toggleOpen();
             }
             break;
           case 38:
             // up
             stop = true;
+            if (!this.state.open && this.state.focused) {
+              this.setState({ 'open': true });
+            }
             this._highlightPreviousResult();
             break;
           case 40:
             // down
             stop = true;
+            if (!this.state.open && this.state.focused) {
+              this.setState({ 'open': true });
+            }
             this._highlightNextResult();
             break;
           case 13:
           case 176:
             // enter / numpad enter
             stop = true;
+            if (!this.props.searchable) {
+              this.setState({ 'open': false });
+            }
             this._selectHighlighted();
+
             break;
         }
         if (stop) {
