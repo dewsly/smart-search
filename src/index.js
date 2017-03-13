@@ -294,6 +294,7 @@ class SmartSearch extends React.Component {
     this.setState({
       query: query
     });
+    this.props.onQueryUpdated(query);
 
     // determine if query value length is >= props.minCharacters
     if (!this.props.autoload && query.length < this.props.minCharacters) {
@@ -456,13 +457,13 @@ class SmartSearch extends React.Component {
             <div
               className="ss-group"
               key={i}>
-              {this.props.showGroupHeading ?
+              {this.props.showGroupHeading && results.label ?
                 <h3 className="ss-group-heading">{results.label}</h3> : '' }
               {results.items && results.items.map((result, j) =>
                 <div
                   className={this._getItemClass(j)}
                   ref={(e) => { if(this.state.highlightIndex === j) { this._highlightedItem = e; }}}
-                  key={j}
+                  key={(results.key || this.state.query.trim().replace(/\s/g, '-')) + '.' + j}
                   onClick={() => {this._selectItem(result)}}>
                   {this._renderItem(result)}
                 </div>
@@ -497,7 +498,8 @@ SmartSearch.propTypes = {
   focusOnMount: React.PropTypes.bool,
   filterSelected: React.PropTypes.bool,
   onFocus: React.PropTypes.func,
-  onBlur: React.PropTypes.func
+  onBlur: React.PropTypes.func,
+  onQueryUpdated: React.PropTypes.func
 };
 SmartSearch.defaultProps = {
   query: '',
@@ -512,6 +514,7 @@ SmartSearch.defaultProps = {
   searchable: true,
   autoload: false,
   focusOnMount: false,
-  filterSelected: true
+  filterSelected: true,
+  onQueryUpdated: function (query) {}
 };
 export default SmartSearch;

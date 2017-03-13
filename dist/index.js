@@ -398,6 +398,7 @@
         this.setState({
           query: query
         });
+        this.props.onQueryUpdated(query);
 
         // determine if query value length is >= props.minCharacters
         if (!this.props.autoload && query.length < this.props.minCharacters) {
@@ -600,7 +601,7 @@
                 {
                   className: 'ss-group',
                   key: i },
-                _this2.props.showGroupHeading ? _react2.default.createElement(
+                _this2.props.showGroupHeading && results.label ? _react2.default.createElement(
                   'h3',
                   { className: 'ss-group-heading' },
                   results.label
@@ -615,7 +616,7 @@
                           _this2._highlightedItem = e;
                         }
                       },
-                      key: j,
+                      key: (results.key || _this2.state.query.trim().replace(/\s/g, '-')) + '.' + j,
                       onClick: function onClick() {
                         _this2._selectItem(result);
                       } },
@@ -653,7 +654,8 @@
     focusOnMount: _react2.default.PropTypes.bool,
     filterSelected: _react2.default.PropTypes.bool,
     onFocus: _react2.default.PropTypes.func,
-    onBlur: _react2.default.PropTypes.func
+    onBlur: _react2.default.PropTypes.func,
+    onQueryUpdated: _react2.default.PropTypes.func
   };
   SmartSearch.defaultProps = {
     query: '',
@@ -668,7 +670,8 @@
     searchable: true,
     autoload: false,
     focusOnMount: false,
-    filterSelected: true
+    filterSelected: true,
+    onQueryUpdated: function onQueryUpdated(query) {}
   };
   exports.default = SmartSearch;
 });
