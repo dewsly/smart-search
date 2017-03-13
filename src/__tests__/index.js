@@ -133,19 +133,6 @@ describe('Shallow Rendering', () => {
     expect(onSelect.getCall(0).args[1]).to.be.an('array');
   });
 
-  it('pre-populates selected items when passing in items', () => {
-    let selected = results[0].items;
-
-    const wrapper = shallow(
-      <SmartSearch
-        results={results}
-        selected={selected} />
-    );
-    setTimeout(function () {
-      expect(wrapper.find('.ss-selected-item')).to.have.length(2);
-    }, 0);
-  });
-
   it('has one .ss-selected-item after clicking on a result', () => {
     const wrapper = shallow(
       <SmartSearch
@@ -298,6 +285,20 @@ describe('Full DOM Rendering', () => {
     done();
   });
 
+  it('pre-populates selected items when passing in items', (done) => {
+    let selected = results[0].items;
+
+    const wrapper = mount(
+      <SmartSearch
+        results={results}
+        selected={selected} />
+    );
+    setTimeout(function () {
+      expect(wrapper.find('.ss-selected-item')).to.have.length(2);
+      done();
+    }, 0);
+  });
+
   it('should not trigger props.search when props.query.lengths < props.minCharacters', () => {
     const search = sinon.spy();
     const wrapper = mount(<SmartSearch delay={0} search={search} query='' results={noresults} />);
@@ -307,7 +308,7 @@ describe('Full DOM Rendering', () => {
     expect(search.called).to.equal(false);
   });
 
-  it('should trigger props.search when props.query.length >= props.minCharacters', () => {
+  it('should trigger props.search when props.query.length >= props.minCharacters', (done) => {
     const search = sinon.spy();
     const wrapper = mount(<SmartSearch delay={0} search={search} query='' results={noresults} />);
     expect(wrapper.props().query).to.equal('');
@@ -317,19 +318,21 @@ describe('Full DOM Rendering', () => {
 
     setTimeout(function () {
       expect(search.callCount).to.equal(1);
+      done();
     }, 0);
 
   });
 
-  it('should immediately trigger props.search when props.autofocus == 1', () => {
+  it('should immediately trigger props.search when props.autoload == 1', (done) => {
     const search = sinon.spy();
-    const wrapper = mount(<SmartSearch autoload={true} search={search} />);
+    const wrapper = mount(<SmartSearch delay={0} autoload={true} search={search} />);
     setTimeout(function () {
       expect(search.callCount).to.equal(1);
-    }, 0);
+      done();
+    }, wrapper.props().delay);
   });
 
-  it('should not trigger props.search when searching for a cached query', () => {
+  it('should not trigger props.search when searching for a cached query', (done) => {
     const search = sinon.stub().callsArgWith(1, null, {"label":"Users", "items":results});
 
     const wrapper = mount(<SmartSearch delay={0} search={search} query='' results={noresults} cache={true} />);
@@ -344,6 +347,7 @@ describe('Full DOM Rendering', () => {
 
     setTimeout(function () {
       expect(search.callCount).to.equal(1);
+      done();
     }, 0);
   });
 
@@ -380,6 +384,52 @@ describe('Full DOM Rendering', () => {
     expect(wrapper.state().highlightIndex).to.equal(-1);
     wrapper.find('input[type="text"]').simulate('keyDown', {which:13});
     expect(wrapper.state().selected).to.have.length(0);
+  });
+
+  it('should select item when pressing enter on highlightIndex != -1', () => {
+    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} />);
+    wrapper.find('input[type="text"]').simulate('click');
+    wrapper.find('input[type="text"]').simulate('keyDown', {which:40});
+    wrapper.find('input[type="text"]').simulate('keyDown', {which:13});
+    expect(wrapper.state().selected).to.have.length(1);
+  });
+
+  it('should close dropdown when pressing enter if searchable is false', () => {
+    const wrapper = mount(<SmartSearch searchable={false} results={results} />);
+    wrapper.setState({open: true});
+    wrapper.find('input[type="text"]').simulate('keyDown', {which:13});
+    expect(wrapper.state().open).to.equal(false);
+  });
+
+  it('should close dropdown when pressing esc if searchable is false', () => {
+    const wrapper = mount(<SmartSearch searchable={false} results={results} />);
+    wrapper.setState({open: true});
+    wrapper.find('input[type="text"]').simulate('keyDown', {which:27});
+    expect(wrapper.state().open).to.equal(false);
+  });
+
+  it('should not select item when pressing spacebar on highlightIndex -1', () => {
+    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} />);
+    wrapper.find('input[type="text"]').simulate('click');
+    expect(wrapper.state().highlightIndex).to.equal(-1);
+    wrapper.find('input[type="text"]').simulate('keyDown', {which:32});
+    expect(wrapper.state().selected).to.have.length(0);
+  });
+
+  it('should toggle dropdown display when pressing spacebar if searchable is false', () => {
+    const wrapper = mount(<SmartSearch searchable={false} results={results} />);
+    wrapper.find('input[type="text"]').simulate('keyDown', {which:32});
+    expect(wrapper.state().open).to.equal(true);
+    wrapper.find('input[type="text"]').simulate('keyDown', {which:32});
+    expect(wrapper.state().open).to.equal(false);
+  });
+
+  it('should select item when pressing spacebar on highlightIndex != -1', () => {
+    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} />);
+    wrapper.find('input[type="text"]').simulate('click');
+    wrapper.find('input[type="text"]').simulate('keyDown', {which:40});
+    wrapper.find('input[type="text"]').simulate('keyDown', {which:32});
+    expect(wrapper.state().selected).to.have.length(1);
   });
 
   it('should handle and render pre-selected items', () => {
@@ -421,6 +471,43 @@ describe('Full DOM Rendering', () => {
   it('should handle null selected prop', () => {
     const wrapper = mount(<SmartSearch selected={null} />);
     expect(wrapper.state().selected).to.be.an('array').and.have.length(0);
+  });
+
+  it('should open on key up or down if focused', () => {
+    const wrapper = mount(<SmartSearch selected={null} />);
+    wrapper.setState({focused: true});
+    wrapper.find('input[type="text"]').simulate('keyDown', {which:38});
+    expect(wrapper.state().open).to.equal(true);
+    wrapper.setState({open: false});
+    wrapper.find('input[type="text"]').simulate('keyDown', {which:40});
+    expect(wrapper.state().open).to.equal(true);
+  });
+
+  it('should be open after you click on the input field with searchable=false', () => {
+    var items = [
+      {
+        label: 'Schools',
+        items: [{
+          id: 1,
+          name: 'place'
+        },
+        {
+          id: 2,
+          name: 'place 2'
+        }]
+    }];
+    const wrapper = mount(
+      <SmartSearch
+        selected={null}
+        multi={false}
+        results={items}
+        searchable={false} />
+    );
+    expect(wrapper.find('.ss-input input')).to.have.length(1);
+    wrapper.find('.ss-input input').simulate('click');
+
+    expect(wrapper.state().open).to.equal(true);
+
   });
 
 });
