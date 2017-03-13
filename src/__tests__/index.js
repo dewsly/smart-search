@@ -164,6 +164,21 @@ describe('Shallow Rendering', () => {
     expect(wrapper.state().query).to.equal('');
   });
 
+  it('calls onQueryUpdated with empty string after clicking on a result', () => {
+    const onQueryUpdated = sinon.spy();
+
+    const wrapper = shallow(
+      <SmartSearch
+        query="Something"
+        onQueryUpdated={onQueryUpdated}
+        results={results} />
+    );
+    expect(wrapper.state().query).to.equal('Something');
+    wrapper.find('.ss-item').first().simulate('click');
+    expect(onQueryUpdated.callCount).to.equal(1);
+    expect(onQueryUpdated.getCall(0).args[0]).to.be.an('string').and.equal('');
+  });
+
   it('triggers onRemove when selected item has been removed', () => {
     const onRemove = sinon.spy();
 
