@@ -182,26 +182,45 @@ describe('Shallow Rendering', () => {
   it('triggers onRemove when selected item has been removed', () => {
     const onRemove = sinon.spy();
 
+    var renderSelectedItem = function(item, removeItem) {
+      return (
+        <div className="item">
+          <span className="item-icon" onClick={removeItem}>×</span>
+          <span className="item-label">Hello</span>
+        </div>
+      );
+    }
     const wrapper = shallow(
       <SmartSearch
         onRemove={onRemove}
-        results={results} />
+        results={results}
+        renderSelectedItem={renderSelectedItem}
+      />
     );
     wrapper.find('.ss-item').first().simulate('click');
-    wrapper.find('.ss-selected-item').first().simulate('click');
+    wrapper.find('.ss-selected-item .item-icon').first().simulate('click');
     expect(onRemove.calledOnce).to.equal(true);
   });
 
   it('triggers onRemove and passes removedItem and selectedItems', () => {
     const onRemove = sinon.spy();
-
+    var renderSelectedItem = function(item, removeItem) {
+      return (
+        <div className="item">
+          <span className="item-icon" onClick={removeItem}>×</span>
+          <span className="item-label">Hello</span>
+        </div>
+      );
+    }
     const wrapper = shallow(
       <SmartSearch
         onRemove={onRemove}
-        results={results} />
+        results={results}
+        renderSelectedItem={renderSelectedItem}
+      />
     );
     wrapper.find('.ss-item').first().simulate('click');
-    wrapper.find('.ss-selected-item').first().simulate('click');
+    wrapper.find('.ss-selected-item .item-icon').first().simulate('click');
     expect(onRemove.calledOnce).to.equal(true);
     expect(onRemove.getCall(0).args.length).to.equal(2);
     expect(onRemove.getCall(0).args[0]).to.be.an('object');
@@ -484,15 +503,33 @@ describe('Full DOM Rendering', () => {
   });
 
   it('should handle multiple add and removes at a time with pre-selected items', () => {
+    var renderSelectedItem = function(item, removeItem) {
+      return (
+        <div className="item">
+          <span className="item-icon" onClick={removeItem}>×</span>
+          <span className="item-label">Hello</span>
+        </div>
+      );
+    }
     const onRemove = sinon.spy();
     const selected = results[0].items;
     expect(selected).to.have.length(2);
-    const wrapper = mount(<SmartSearch search={() => {}} selected={selected} results={results} onRemove={onRemove} cache={true} multi={true} />);
+    const wrapper = mount(
+      <SmartSearch
+        search={() => {}}
+        selected={selected}
+        results={results}
+        onRemove={onRemove}
+        cache={true}
+        multi={true}
+        renderSelectedItem={renderSelectedItem}
+      />
+    );
     expect(wrapper.find('.ss-selected-item')).to.have.length(2);
-    wrapper.find('.ss-selected-item').first().simulate('click');
+    wrapper.find('.ss-selected-item .item-icon').first().simulate('click');
     expect(onRemove.callCount).to.equal(1);
     wrapper.find('.ss-item').first().simulate('click');
-    wrapper.find('.ss-selected-item').first().simulate('click');
+    wrapper.find('.ss-selected-item .item-icon').first().simulate('click');
     expect(onRemove.callCount).to.equal(2);
   });
 
