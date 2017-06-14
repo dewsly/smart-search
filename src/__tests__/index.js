@@ -496,12 +496,65 @@ describe('Full DOM Rendering', () => {
     expect(onRemove.callCount).to.equal(2);
   });
 
+  it('should use search results when filterSelected is true', (done) => {
+    function filterResults(query, callback) {
+      callback(null, results.slice(0, 1));
+    }
+    const renderItem = sinon.spy();
+    const wrapper = mount(
+      <SmartSearch
+        results={results}
+        search={filterResults}
+        selected={[results[0].items[0]]}
+        filterSelected={true}
+        autoload={true}
+        delay={0}
+        renderItem={renderItem}
+      />
+    );
+    setTimeout(function() {
+      expect(wrapper.find('.ss-item')).to.have.length(1);
+      done();
+    });
+
+  });
 
   it('should update selected after mount', () => {
     const wrapper = mount(<SmartSearch selected={results[0].items} />);
     expect(wrapper.state().selected).to.have.length(results[0].items.length);
     wrapper.setProps({selected: results[1].items});
     expect(wrapper.state().selected).to.have.length(results[1].items.length);
+  });
+
+  it('should execute search on focus when minCharacters is 0', (done) => {
+    const search = sinon.spy();
+    const wrapper = mount(
+      <SmartSearch
+        search={search}
+        minCharacters={0}
+        autoload={false}
+        delay={0}
+      />);
+      setTimeout(function() {
+        wrapper.find('input[type="text"]').simulate('focus');
+        setTimeout(function() {
+          expect(search.callCount).to.equal(1);
+          done();
+        });
+      });
+  });
+
+  it('should not delete selectedItem if allowDelete is false', () => {
+    const wrapper = mount(
+      <SmartSearch
+        allowDelete={false}
+        selected={results[0].items}
+      />);
+
+      wrapper.setState({focused: true});
+      wrapper.find('input[type="text"]').simulate('keyDown', {which:8});
+      expect(wrapper.state().selected).to.be.an('array').and.have.length(results[0].items.length);
+
   });
 
   it('should handle null results prop', () => {

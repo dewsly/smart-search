@@ -204,10 +204,10 @@
       key: '_getResults',
       value: function _getResults() {
         var self = this;
-        if (!this.props.search || !this.props.filterSelected) {
-          return this.props.results;
-        }
         var results = this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
+        if (!this.props.search || !this.props.filterSelected) {
+          return results;
+        }
 
         // remove any selected results from the set:
         var filteredResults = results.map(function (group) {
@@ -323,6 +323,11 @@
           stateObj.open = true;
         }
         this.setState(stateObj);
+
+        if (this.props.minCharacters === 0 && this.props.search && !this.state.query) {
+          this._onQueryChange('');
+        }
+
         if (this._results) {
           this._results.scrollTop = 0;
         }
@@ -339,7 +344,7 @@
         switch (e.which) {
           case 8:
             // delete
-            if (!this.state.query && this.state.selected.length && this.props.searchable) {
+            if (!this.state.query && this.state.selected.length && this.props.searchable && this.props.allowDelete) {
               this._removeItem(this.state.selected[this.state.selected.length - 1]);
             }
             break;
@@ -657,7 +662,8 @@
     filterSelected: _react2.default.PropTypes.bool,
     onFocus: _react2.default.PropTypes.func,
     onBlur: _react2.default.PropTypes.func,
-    onQueryUpdated: _react2.default.PropTypes.func
+    onQueryUpdated: _react2.default.PropTypes.func,
+    allowDelete: _react2.default.PropTypes.bool
   };
   SmartSearch.defaultProps = {
     query: '',
@@ -673,7 +679,8 @@
     autoload: false,
     focusOnMount: false,
     filterSelected: true,
-    onQueryUpdated: function onQueryUpdated(query) {}
+    onQueryUpdated: function onQueryUpdated(query) {},
+    allowDelete: true
   };
   exports.default = SmartSearch;
 });
