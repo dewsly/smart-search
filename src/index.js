@@ -357,6 +357,12 @@ class SmartSearch extends React.Component {
     }
   }
 
+  _removeItemCallback(item) {
+    return () => {
+      this._removeItem(item);
+    };
+  }
+
   _renderItem(item) {
     return this.props.renderItem ? this.props.renderItem(item) : JSON.stringify(item);
   }
@@ -367,7 +373,7 @@ class SmartSearch extends React.Component {
 
   _renderSelectedItem(item) {
     return this.props.renderSelectedItem
-      ? this.props.renderSelectedItem(item)
+      ? this.props.renderSelectedItem(item, this._removeItemCallback(item))
       : JSON.stringify(item);
   }
 
@@ -443,8 +449,7 @@ class SmartSearch extends React.Component {
           {this.state.selected.map((item, i) =>
             <div
               className="ss-selected-item"
-              key={i}
-              onClick={() => {this._removeItem(item)}}>
+              key={i}>
               {this._renderSelectedItem(item)}
             </div>
           )}

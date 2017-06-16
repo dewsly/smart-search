@@ -459,6 +459,15 @@
         }
       }
     }, {
+      key: '_removeItemCallback',
+      value: function _removeItemCallback(item) {
+        var _this2 = this;
+
+        return function () {
+          _this2._removeItem(item);
+        };
+      }
+    }, {
       key: '_renderItem',
       value: function _renderItem(item) {
         return this.props.renderItem ? this.props.renderItem(item) : JSON.stringify(item);
@@ -471,7 +480,7 @@
     }, {
       key: '_renderSelectedItem',
       value: function _renderSelectedItem(item) {
-        return this.props.renderSelectedItem ? this.props.renderSelectedItem(item) : JSON.stringify(item);
+        return this.props.renderSelectedItem ? this.props.renderSelectedItem(item, this._removeItemCallback(item)) : JSON.stringify(item);
       }
     }, {
       key: '_selectHighlighted',
@@ -539,7 +548,7 @@
     }, {
       key: 'render',
       value: function render() {
-        var _this2 = this;
+        var _this3 = this;
 
         var _results = this._getResults();
         return _react2.default.createElement(
@@ -560,11 +569,8 @@
                 'div',
                 {
                   className: 'ss-selected-item',
-                  key: i,
-                  onClick: function onClick() {
-                    _this2._removeItem(item);
-                  } },
-                _this2._renderSelectedItem(item)
+                  key: i },
+                _this3._renderSelectedItem(item)
               );
             }),
             _react2.default.createElement(
@@ -575,24 +581,24 @@
                 type: 'text',
                 name: 'search',
                 ref: function ref(e) {
-                  _this2._input = e;
+                  _this3._input = e;
                 },
                 title: this._renderLabel(),
                 value: this.state.query,
                 onClick: function onClick(e) {
-                  _this2._toggleOpen();
+                  _this3._toggleOpen();
                 },
                 onChange: function onChange(e) {
-                  _this2._handleChange(e);
+                  _this3._handleChange(e);
                 },
                 onFocus: function onFocus() {
-                  _this2._onFocus();
+                  _this3._onFocus();
                 },
                 onBlur: function onBlur() {
-                  _this2._onBlur();
+                  _this3._onBlur();
                 },
                 onKeyDown: function onKeyDown(e) {
-                  _this2._onKeyDown(e);
+                  _this3._onKeyDown(e);
                 } })
             )
           ),
@@ -600,7 +606,7 @@
             'div',
             { className: 'ss-results',
               ref: function ref(e) {
-                _this2._results = e;
+                _this3._results = e;
               } },
             _results && _results.map(function (results, i) {
               return _react2.default.createElement(
@@ -608,7 +614,7 @@
                 {
                   className: 'ss-group',
                   key: i },
-                _this2.props.showGroupHeading && results.label ? _react2.default.createElement(
+                _this3.props.showGroupHeading && results.label ? _react2.default.createElement(
                   'h3',
                   { className: 'ss-group-heading' },
                   results.label
@@ -617,17 +623,17 @@
                   return _react2.default.createElement(
                     'div',
                     {
-                      className: _this2._getItemClass(j),
+                      className: _this3._getItemClass(j),
                       ref: function ref(e) {
-                        if (_this2.state.highlightIndex === j) {
-                          _this2._highlightedItem = e;
+                        if (_this3.state.highlightIndex === j) {
+                          _this3._highlightedItem = e;
                         }
                       },
-                      key: (results.key || _this2.state.query.trim().replace(/\s/g, '-')) + '.' + j,
+                      key: (results.key || _this3.state.query.trim().replace(/\s/g, '-')) + '.' + j,
                       onClick: function onClick() {
-                        _this2._selectItem(result);
+                        _this3._selectItem(result);
                       } },
-                    _this2._renderItem(result)
+                    _this3._renderItem(result)
                   );
                 })
               );
