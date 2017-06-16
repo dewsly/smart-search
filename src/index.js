@@ -111,10 +111,10 @@ class SmartSearch extends React.Component {
 
   _getResults() {
     let self = this;
-    if (!this.props.search || !this.props.filterSelected) {
-      return this.props.results;
-    }
     let results = this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
+    if (!this.props.search || !this.props.filterSelected) {
+      return results;
+    }
 
     // remove any selected results from the set:
     let filteredResults = results.map((group) => {
@@ -221,6 +221,14 @@ class SmartSearch extends React.Component {
       stateObj.open = true;
     }
     this.setState(stateObj);
+
+    if (this.props.minCharacters === 0
+        && this.props.search
+        && !this.state.query
+      ) {
+      this._onQueryChange('');
+    }
+
     if (this._results) {
       this._results.scrollTop = 0;
     }
@@ -236,7 +244,9 @@ class SmartSearch extends React.Component {
         // delete
         if (!this.state.query
             && this.state.selected.length
-            && this.props.searchable) {
+            && this.props.searchable
+            && this.props.allowDelete
+        ) {
           this._removeItem(this.state.selected[this.state.selected.length-1]);
         }
         break;
@@ -506,7 +516,8 @@ SmartSearch.propTypes = {
   filterSelected: React.PropTypes.bool,
   onFocus: React.PropTypes.func,
   onBlur: React.PropTypes.func,
-  onQueryUpdated: React.PropTypes.func
+  onQueryUpdated: React.PropTypes.func,
+  allowDelete: React.PropTypes.bool
 };
 SmartSearch.defaultProps = {
   query: '',
@@ -522,6 +533,7 @@ SmartSearch.defaultProps = {
   autoload: false,
   focusOnMount: false,
   filterSelected: true,
-  onQueryUpdated: function (query) {}
+  onQueryUpdated: function (query) {},
+  allowDelete: true
 };
 export default SmartSearch;
