@@ -641,4 +641,23 @@ describe('Full DOM Rendering', () => {
 
   });
 
+  it('should add results from multiple callbacks with same query', (done) => {
+    const search = function (query, callback) {
+      callback(null, [results[0]]);
+      callback(null, [results[1]]);
+    };
+    const wrapper = mount(
+      <SmartSearch
+        delay={0}
+        search={search}
+        query=''
+        results={noresults} />
+    );
+    wrapper.setProps({ query: 'sea' });
+    setTimeout(function () {
+      expect(wrapper.state('cachedResults').length).to.equal(2);
+      done();
+    });
+  });
+
 });
