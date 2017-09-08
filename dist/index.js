@@ -102,7 +102,7 @@
         loading: false,
         highlightIndex: -1,
         cache: {},
-        cachedResults: null
+        cachedResults: []
       };
       _this._selectItem = _this._selectItem.bind(_this);
       _this._removeItem = _this._removeItem.bind(_this);
@@ -425,10 +425,14 @@
 
           self._queryTimeout = setTimeout(function () {
             self.setState({
-              loading: true
+              loading: true,
+              cachedResults: []
             });
             self.props.search(query, function (err, results) {
               var cache = self.state.cache;
+              if (query == self.state.query) {
+                results = self.state.cachedResults.concat(results);
+              }
               if (self.props.cache) {
                 cache[query] = results;
               }

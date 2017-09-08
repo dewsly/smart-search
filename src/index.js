@@ -23,7 +23,7 @@ class SmartSearch extends React.Component {
       loading: false,
       highlightIndex: -1,
       cache: {},
-      cachedResults: null
+      cachedResults: []
     };
     this._selectItem = this._selectItem.bind(this);
     this._removeItem = this._removeItem.bind(this);
@@ -326,10 +326,14 @@ class SmartSearch extends React.Component {
 
       self._queryTimeout = setTimeout(function () {
         self.setState({
-          loading: true
+          loading: true,
+          cachedResults: []
         });
         self.props.search(query, function (err, results) {
           var cache = self.state.cache;
+          if (query == self.state.query) {
+            results = self.state.cachedResults.concat(results);
+          }
           if (self.props.cache) {
             cache[query] = results;
           }
