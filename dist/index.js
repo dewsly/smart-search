@@ -77,6 +77,8 @@
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
+  var noop = function noop() {};
+
   var SmartSearch = function (_React$Component) {
     _inherits(SmartSearch, _React$Component);
 
@@ -102,7 +104,8 @@
         loading: false,
         highlightIndex: -1,
         cache: {},
-        cachedResults: []
+        cachedResults: [],
+        showSearchResults: false
       };
       _this._selectItem = _this._selectItem.bind(_this);
       _this._removeItem = _this._removeItem.bind(_this);
@@ -426,7 +429,8 @@
           self._queryTimeout = setTimeout(function () {
             self.setState({
               loading: true,
-              cachedResults: []
+              cachedResults: [],
+              showSearchResults: false
             });
             self.props.search(query, function (err, results) {
               var cache = self.state.cache;
@@ -439,7 +443,8 @@
               self.setState({
                 cachedResults: results,
                 cache: cache,
-                loading: false
+                loading: false,
+                showSearchResults: true
               });
             });
           }, self.props.delay);
@@ -606,6 +611,11 @@
                 } })
             )
           ),
+          this.state.showSearchResults && this._getResultCount() == 0 && !!this.props.renderNoResultsMessage() && _react2.default.createElement(
+            'div',
+            { className: 'ss-no-results' },
+            this.props.renderNoResultsMessage()
+          ),
           _react2.default.createElement(
             'div',
             { className: 'ss-results',
@@ -673,7 +683,8 @@
     onFocus: _react2.default.PropTypes.func,
     onBlur: _react2.default.PropTypes.func,
     onQueryUpdated: _react2.default.PropTypes.func,
-    allowDelete: _react2.default.PropTypes.bool
+    allowDelete: _react2.default.PropTypes.bool,
+    renderNoResultsMessage: _react2.default.PropTypes.func
   };
   SmartSearch.defaultProps = {
     query: '',
@@ -689,8 +700,9 @@
     autoload: false,
     focusOnMount: false,
     filterSelected: true,
-    onQueryUpdated: function onQueryUpdated(query) {},
-    allowDelete: true
+    onQueryUpdated: noop,
+    allowDelete: true,
+    renderNoResultsMessage: noop
   };
   exports.default = SmartSearch;
 });

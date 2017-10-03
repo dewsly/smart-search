@@ -660,4 +660,26 @@ describe('Full DOM Rendering', () => {
     });
   });
 
+  it('should render no results prop if no search results', (done) => {
+    const renderNoResultsMessage = sinon.spy();
+    const search = function (query, callback) {
+      callback(null, [{"items": []}]);
+    };
+    const wrapper = mount(
+      <SmartSearch
+        delay={0}
+        search={search}
+        query=''
+        results={noresults}
+        renderNoResultsMessage={renderNoResultsMessage}
+      />
+    );
+    wrapper.setProps({ query: 'sea' });
+    setTimeout(function() {
+      expect(wrapper.state('showSearchResults')).to.equal(true);
+      expect(renderNoResultsMessage.callCount).to.equal(1);
+      done();
+    });
+  });
+
 });

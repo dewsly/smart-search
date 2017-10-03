@@ -2,6 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import objectAssign from 'object-assign';
 
+const noop = () => {};
+
 class SmartSearch extends React.Component {
 
   constructor(props) {
@@ -23,7 +25,8 @@ class SmartSearch extends React.Component {
       loading: false,
       highlightIndex: -1,
       cache: {},
-      cachedResults: []
+      cachedResults: [],
+      showSearchResults: false
     };
     this._selectItem = this._selectItem.bind(this);
     this._removeItem = this._removeItem.bind(this);
@@ -327,7 +330,8 @@ class SmartSearch extends React.Component {
       self._queryTimeout = setTimeout(function () {
         self.setState({
           loading: true,
-          cachedResults: []
+          cachedResults: [],
+          showSearchResults: false
         });
         self.props.search(query, function (err, results) {
           var cache = self.state.cache;
@@ -340,7 +344,8 @@ class SmartSearch extends React.Component {
           self.setState({
             cachedResults: results,
             cache: cache,
-            loading: false
+            loading: false,
+            showSearchResults: true
           });
         });
       }, self.props.delay);
@@ -472,6 +477,14 @@ class SmartSearch extends React.Component {
               onKeyDown={(e) => { this._onKeyDown(e); }} />
           </div>
         </div>
+        {(this.state.showSearchResults &&
+          this._getResultCount() == 0 &&
+          !!this.props.renderNoResultsMessage() 
+        ) && (
+          <div className="ss-no-results">
+            {this.props.renderNoResultsMessage()}
+          </div>
+        )}
         <div className="ss-results"
              ref={(e) => { this._results = e; }}>
           {_results && _results.map((results, i) =>
@@ -521,7 +534,8 @@ SmartSearch.propTypes = {
   onFocus: React.PropTypes.func,
   onBlur: React.PropTypes.func,
   onQueryUpdated: React.PropTypes.func,
-  allowDelete: React.PropTypes.bool
+  allowDelete: React.PropTypes.bool,
+  renderNoResultsMessage: React.PropTypes.func
 };
 SmartSearch.defaultProps = {
   query: '',
@@ -537,7 +551,8 @@ SmartSearch.defaultProps = {
   autoload: false,
   focusOnMount: false,
   filterSelected: true,
-  onQueryUpdated: function (query) {},
-  allowDelete: true
+  onQueryUpdated: noop,
+  allowDelete: true,
+  renderNoResultsMessage: noop
 };
 export default SmartSearch;
