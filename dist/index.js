@@ -611,7 +611,7 @@
                 } })
             )
           ),
-          this.state.showSearchResults && this._getResultCount() == 0 && !!this.props.renderNoResultsMessage() && _react2.default.createElement(
+          this.state.showSearchResults && this._getResultCount() == 0 && !!this.props.renderNoResultsMessage && _react2.default.createElement(
             'div',
             { className: 'ss-no-results' },
             this.props.renderNoResultsMessage()
@@ -701,8 +701,7 @@
     focusOnMount: false,
     filterSelected: true,
     onQueryUpdated: noop,
-    allowDelete: true,
-    renderNoResultsMessage: noop
+    allowDelete: true
   };
   exports.default = SmartSearch;
 });

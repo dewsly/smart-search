@@ -479,7 +479,7 @@ class SmartSearch extends React.Component {
         </div>
         {(this.state.showSearchResults &&
           this._getResultCount() == 0 &&
-          !!this.props.renderNoResultsMessage() 
+          !!this.props.renderNoResultsMessage
         ) && (
           <div className="ss-no-results">
             {this.props.renderNoResultsMessage()}
@@ -552,7 +552,6 @@ SmartSearch.defaultProps = {
   focusOnMount: false,
   filterSelected: true,
   onQueryUpdated: noop,
-  allowDelete: true,
-  renderNoResultsMessage: noop
+  allowDelete: true
 };
 export default SmartSearch;
