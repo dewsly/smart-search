@@ -720,4 +720,47 @@ describe('Full DOM Rendering', () => {
     });
   });
 
+  it('should showSearchResults when query is >= minCharacters and cached result are used', (done) => {
+    var items = [
+      {
+        label: 'Schools',
+        items: [{
+          id: 1,
+          name: 'place'
+        },
+        {
+          id: 2,
+          name: 'place 2'
+        }]
+    }];
+    const search = function (query, callback) {
+      callback(null, [{"items": items}]);
+    };
+    const wrapper = mount(
+      <SmartSearch
+        delay={0}
+        search={search}
+        minCharacters={10}
+        query="spacepants"
+        results={items}
+        autoload={true}
+        cache={true}
+      />
+    );
+
+    setTimeout(function () {
+        expect(wrapper.state('showSearchResults')).to.equal(true);
+        wrapper.setProps({ query: 'spacepant' });
+        setTimeout(function () {
+          expect(wrapper.state('showSearchResults')).to.equal(false);
+          wrapper.setProps({ query: 'spacepants' });
+          setTimeout(function() {
+              expect(wrapper.state('showSearchResults')).to.equal(true);
+              done();
+          });
+        });
+    });
+
+  });
+
 });
