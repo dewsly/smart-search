@@ -105,7 +105,7 @@
         highlightIndex: -1,
         cache: {},
         cachedResults: [],
-        showSearchResults: false
+        showSearchResults: !_this.props.search
       };
       _this._selectItem = _this._selectItem.bind(_this);
       _this._removeItem = _this._removeItem.bind(_this);
@@ -208,7 +208,7 @@
       value: function _getResults() {
         var self = this;
         var results = this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
-        if (!this.props.search || !this.props.filterSelected) {
+        if (!this.props.filterSelected || !results) {
           return results;
         }
 
@@ -404,6 +404,7 @@
       key: '_onQueryChange',
       value: function _onQueryChange(query) {
         if (this.props.search) {
+          clearTimeout(this._queryTimeout);
           this.setState({
             showSearchResults: false
           });
@@ -429,9 +430,6 @@
         // execute search action with search value:
         if (this.props.search) {
           var self = this;
-
-          clearTimeout(self._queryTimeout);
-
           self._queryTimeout = setTimeout(function () {
             self.setState({
               loading: true,
@@ -627,7 +625,7 @@
               ref: function ref(e) {
                 _this3._results = e;
               } },
-            _results && _results.map(function (results, i) {
+            this.state.showSearchResults && _results && _results.map(function (results, i) {
               return _react2.default.createElement(
                 'div',
                 {
