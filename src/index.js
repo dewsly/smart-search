@@ -308,7 +308,7 @@ class SmartSearch extends React.Component {
       clearTimeout(this._queryTimeout);
       this.setState({
         showSearchResults: false
-      })
+      });
     }
 
     this.setState({
