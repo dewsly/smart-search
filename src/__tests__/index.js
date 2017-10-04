@@ -706,7 +706,6 @@ describe('Full DOM Rendering', () => {
         minCharacters={10}
         query='spacepants'
         results={items}
-        autoload={true}
       />
     );
     expect(wrapper.find('.ss-results .ss-group')).to.have.length(1);
@@ -716,6 +715,6 @@ describe('Full DOM Rendering', () => {
       expect(wrapper.find('.ss-results .ss-group')).to.have.length(0);
       done();
     });
-  });
+  }, 200);
 
 });

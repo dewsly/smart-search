@@ -26,7 +26,7 @@ class SmartSearch extends React.Component {
       highlightIndex: -1,
       cache: {},
       cachedResults: [],
-      showSearchResults: false
+      showSearchResults: !this.props.search
     };
     this._selectItem = this._selectItem.bind(this);
     this._removeItem = this._removeItem.bind(this);
@@ -304,6 +304,7 @@ class SmartSearch extends React.Component {
   }
 
   _onQueryChange(query) {
+    console.log(query);
     if (this.props.search) {
       clearTimeout(this._queryTimeout);
       this.setState({
@@ -331,7 +332,6 @@ class SmartSearch extends React.Component {
     // execute search action with search value:
     if (this.props.search) {
       var self = this;
-
       self._queryTimeout = setTimeout(function () {
         self.setState({
           loading: true,
@@ -491,7 +491,7 @@ class SmartSearch extends React.Component {
         )}
         <div className="ss-results"
              ref={(e) => { this._results = e; }}>
-          {_results && _results.map((results, i) =>
+          {(this.state.showSearchResults && _results) && _results.map((results, i) =>
             <div
               className="ss-group"
               key={i}>
