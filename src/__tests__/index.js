@@ -720,7 +720,7 @@ describe('Full DOM Rendering', () => {
     });
   });
 
-  it('should showSearchResults when query is >= minCharacters and cached result are used', (done) => {
+  it('should showSearchResults cached result are used', (done) => {
     var items = [
       {
         label: 'Schools',

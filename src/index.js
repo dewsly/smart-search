@@ -324,6 +324,7 @@ class SmartSearch extends React.Component {
     if (this.props.cache && this.state.cache[query]) {
       // set cached results to value of cache
       this.setState({
+        showSearchResults: true,
         cachedResults: this.state.cache[query]
       });
       return;
