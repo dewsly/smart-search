@@ -305,6 +305,7 @@ class SmartSearch extends React.Component {
 
   _onQueryChange(query) {
     if (this.props.search) {
+      clearTimeout(this._queryTimeout);
       this.setState({
         showSearchResults: false
       })
@@ -330,8 +331,6 @@ class SmartSearch extends React.Component {
     // execute search action with search value:
     if (this.props.search) {
       var self = this;
-
-      clearTimeout(self._queryTimeout);
 
       self._queryTimeout = setTimeout(function () {
         self.setState({
