@@ -48,7 +48,7 @@ class SmartSearch extends React.Component {
 
   componentDidMount() {
     if (this.props.autoload && this.props.search) {
-      this._onQueryChange('');
+      this._onQueryChange(this.props.query || '');
     }
 
     if (this.props.focusOnMount && this._input) {
@@ -304,13 +304,19 @@ class SmartSearch extends React.Component {
   }
 
   _onQueryChange(query) {
+    if (this.props.search) {
+      this.setState({
+        showSearchResults: false
+      })
+    }
+
     this.setState({
       query: query
     });
     this.props.onQueryUpdated(query);
 
     // determine if query value length is >= props.minCharacters
-    if (!this.props.autoload && query.length < this.props.minCharacters) {
+    if (query.length < this.props.minCharacters) {
       return;
     }
 
@@ -330,8 +336,7 @@ class SmartSearch extends React.Component {
       self._queryTimeout = setTimeout(function () {
         self.setState({
           loading: true,
-          cachedResults: [],
-          showSearchResults: false
+          cachedResults: []
         });
         self.props.search(query, function (err, results) {
           var cache = self.state.cache;

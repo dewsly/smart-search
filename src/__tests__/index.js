@@ -383,9 +383,9 @@ describe('Full DOM Rendering', () => {
 
   });
 
-  it('should immediately trigger props.search when props.autoload == 1', (done) => {
+  it('should immediately trigger props.search when props.autoload == 1 and query >= minchars', (done) => {
     const search = sinon.spy();
-    const wrapper = mount(<SmartSearch delay={0} autoload={true} search={search} />);
+    const wrapper = mount(<SmartSearch delay={0} autoload={true} search={search} minCharacters={0} />);
     setTimeout(function () {
       expect(search.callCount).to.equal(1);
       done();
@@ -545,6 +545,7 @@ describe('Full DOM Rendering', () => {
         selected={[results[0].items[0]]}
         filterSelected={true}
         autoload={true}
+        minCharacters={0}
         delay={0}
         renderItem={renderItem}
       />
@@ -678,6 +679,41 @@ describe('Full DOM Rendering', () => {
     setTimeout(function() {
       expect(wrapper.state('showSearchResults')).to.equal(true);
       expect(renderNoResultsMessage.callCount).to.equal(1);
+      done();
+    });
+  });
+
+  it('should clear results when query changes to less than minCharacters', (done) => {
+    var items = [
+      {
+        label: 'Schools',
+        items: [{
+          id: 1,
+          name: 'place'
+        },
+        {
+          id: 2,
+          name: 'place 2'
+        }]
+    }];
+    const search = function (query, callback) {
+      callback(null, [{"items": items}]);
+    };
+    const wrapper = mount(
+      <SmartSearch
+        delay={0}
+        search={search}
+        minCharacters={10}
+        query='spacepants'
+        results={items}
+        autoload={true}
+      />
+    );
+    expect(wrapper.find('.ss-results .ss-group')).to.have.length(1);
+    wrapper.setProps({ query: 'spacepant' });
+    setTimeout(function() {
+      expect(wrapper.state('showSearchResults')).to.equal(false);
+      expect(wrapper.find('.ss-results .ss-group')).to.have.length(0);
       done();
     });
   });
