@@ -425,21 +425,21 @@ describe('Full DOM Rendering', () => {
       );
     };
 
-    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} renderItem={renderItem} />);
+    const wrapper = mount(<SmartSearch results={results} cache={true} renderItem={renderItem} />);
     wrapper.find('#item-1').first().closest('.ss-item').simulate('click');
     expect(wrapper.state().selected).to.have.length(1);
     expect(wrapper.find('#item-1')).to.have.length(0);
   });
 
   it('highlights option selected with keyboard', () => {
-    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} />);
+    const wrapper = mount(<SmartSearch results={results} cache={true} />);
     wrapper.find('input[type="text"]').simulate('click');
     wrapper.find('input[type="text"]').simulate('keyDown', {which:40});
     expect(wrapper.state().highlightIndex).to.equal(0);
   });
 
   it('should not select item when pressing enter key on highlightIndex -1', () => {
-    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} />);
+    const wrapper = mount(<SmartSearch results={results} cache={true} />);
     wrapper.find('input[type="text"]').simulate('click');
     expect(wrapper.state().highlightIndex).to.equal(-1);
     wrapper.find('input[type="text"]').simulate('keyDown', {which:13});
@@ -447,7 +447,7 @@ describe('Full DOM Rendering', () => {
   });
 
   it('should select item when pressing enter on highlightIndex != -1', () => {
-    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} />);
+    const wrapper = mount(<SmartSearch results={results} cache={true} />);
     wrapper.find('input[type="text"]').simulate('click');
     wrapper.find('input[type="text"]').simulate('keyDown', {which:40});
     wrapper.find('input[type="text"]').simulate('keyDown', {which:13});
@@ -469,7 +469,7 @@ describe('Full DOM Rendering', () => {
   });
 
   it('should not select item when pressing spacebar on highlightIndex -1', () => {
-    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} />);
+    const wrapper = mount(<SmartSearch results={results} cache={true} />);
     wrapper.find('input[type="text"]').simulate('click');
     expect(wrapper.state().highlightIndex).to.equal(-1);
     wrapper.find('input[type="text"]').simulate('keyDown', {which:32});
@@ -485,7 +485,7 @@ describe('Full DOM Rendering', () => {
   });
 
   it('should select item when pressing spacebar on highlightIndex != -1', () => {
-    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} />);
+    const wrapper = mount(<SmartSearch results={results} cache={true} />);
     wrapper.find('input[type="text"]').simulate('click');
     wrapper.find('input[type="text"]').simulate('keyDown', {which:40});
     wrapper.find('input[type="text"]').simulate('keyDown', {which:32});
@@ -496,7 +496,7 @@ describe('Full DOM Rendering', () => {
     const onRemove = sinon.spy();
     const selected = results[0].items;
     expect(selected).to.have.length(2);
-    const wrapper = mount(<SmartSearch search={() => {}} selected={selected} results={results} onRemove={onRemove} cache={true} multi={true} />);
+    const wrapper = mount(<SmartSearch selected={selected} results={results} onRemove={onRemove} cache={true} multi={true} />);
     expect(onRemove.callCount).to.equal(0);
     expect(wrapper.find('.ss-selected-item')).to.have.length(2);
     expect(wrapper.state().selected).to.equal(selected);
@@ -516,7 +516,6 @@ describe('Full DOM Rendering', () => {
     expect(selected).to.have.length(2);
     const wrapper = mount(
       <SmartSearch
-        search={() => {}}
         selected={selected}
         results={results}
         onRemove={onRemove}
@@ -704,17 +703,21 @@ describe('Full DOM Rendering', () => {
         delay={0}
         search={search}
         minCharacters={10}
-        query='spacepants'
+        query="spacepants"
         results={items}
+        autoload={true}
       />
     );
-    expect(wrapper.find('.ss-results .ss-group')).to.have.length(1);
-    wrapper.setProps({ query: 'spacepant' });
-    setTimeout(function() {
-      expect(wrapper.state('showSearchResults')).to.equal(false);
-      expect(wrapper.find('.ss-results .ss-group')).to.have.length(0);
-      done();
+    setTimeout(function () {
+      expect(wrapper.state('showSearchResults')).to.equal(true);
+      expect(wrapper.find('.ss-results .ss-group')).to.have.length(1);
+      wrapper.setProps({ query: 'spacepant' });
+      setTimeout(function() {
+        expect(wrapper.state('showSearchResults')).to.equal(false);
+        expect(wrapper.find('.ss-results .ss-group')).to.have.length(0);
+        done();
+      });
     });
-  }, 200);
+  });
 
 });

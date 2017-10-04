@@ -115,7 +115,7 @@ class SmartSearch extends React.Component {
   _getResults() {
     let self = this;
     let results = this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
-    if (!this.props.search || !this.props.filterSelected) {
+    if (!this.props.filterSelected || !results) {
       return results;
     }
 
@@ -304,7 +304,6 @@ class SmartSearch extends React.Component {
   }
 
   _onQueryChange(query) {
-    console.log(query);
     if (this.props.search) {
       clearTimeout(this._queryTimeout);
       this.setState({
