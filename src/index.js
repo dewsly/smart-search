@@ -198,7 +198,7 @@ class SmartSearch extends React.Component {
 
   _isSelected(item) {
     let found = this.state.selected.filter((result) => {
-      return result.id === item.id;
+      return item.id && result.id === item.id;
     });
     return found.length;
   }

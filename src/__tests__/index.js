@@ -556,6 +556,22 @@ describe('Full DOM Rendering', () => {
 
   });
 
+  it('should not filter results with no id', (done) => {
+    var resultsWithNoId = [{'items': [{'name': 'Alf'}, {'name': 'Bananas'}]}];
+    const wrapper = mount(
+      <SmartSearch
+        results={resultsWithNoId}
+      />
+    );
+    setTimeout(function() {
+      wrapper.find('.ss-item').first().simulate('click');
+      setTimeout(function() {
+        expect(wrapper.find('.ss-item')).to.have.length(2);
+        done();
+      }, 200);
+    });
+  });
+
   it('should update selected after mount', () => {
     const wrapper = mount(<SmartSearch selected={results[0].items} />);
     expect(wrapper.state().selected).to.have.length(results[0].items.length);

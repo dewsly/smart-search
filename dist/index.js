@@ -296,7 +296,7 @@
       key: '_isSelected',
       value: function _isSelected(item) {
         var found = this.state.selected.filter(function (result) {
-          return result.id === item.id;
+          return item.id && result.id === item.id;
         });
         return found.length;
       }
