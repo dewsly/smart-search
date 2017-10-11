@@ -77,6 +77,8 @@
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
+  var noop = function noop() {};
+
   var SmartSearch = function (_React$Component) {
     _inherits(SmartSearch, _React$Component);
 
@@ -102,7 +104,8 @@
         loading: false,
         highlightIndex: -1,
         cache: {},
-        cachedResults: []
+        cachedResults: [],
+        showSearchResults: !_this.props.search
       };
       _this._selectItem = _this._selectItem.bind(_this);
       _this._removeItem = _this._removeItem.bind(_this);
@@ -129,7 +132,7 @@
       key: 'componentDidMount',
       value: function componentDidMount() {
         if (this.props.autoload && this.props.search) {
-          this._onQueryChange('');
+          this._onQueryChange(this.props.query || '');
         }
 
         if (this.props.focusOnMount && this._input) {
@@ -205,7 +208,7 @@
       value: function _getResults() {
         var self = this;
         var results = this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
-        if (!this.props.search || !this.props.filterSelected) {
+        if (!this.props.filterSelected || !results) {
           return results;
         }
 
@@ -293,7 +296,7 @@
       key: '_isSelected',
       value: function _isSelected(item) {
         var found = this.state.selected.filter(function (result) {
-          return result.id === item.id;
+          return item.id && result.id === item.id;
         });
         return found.length;
       }
@@ -400,19 +403,27 @@
     }, {
       key: '_onQueryChange',
       value: function _onQueryChange(query) {
+        if (this.props.search) {
+          clearTimeout(this._queryTimeout);
+          this.setState({
+            showSearchResults: false
+          });
+        }
+
         this.setState({
           query: query
         });
         this.props.onQueryUpdated(query);
 
         // determine if query value length is >= props.minCharacters
-        if (!this.props.autoload && query.length < this.props.minCharacters) {
+        if (query.length < this.props.minCharacters) {
           return;
         }
 
         if (this.props.cache && this.state.cache[query]) {
           // set cached results to value of cache
           this.setState({
+            showSearchResults: true,
             cachedResults: this.state.cache[query]
           });
           return;
@@ -420,9 +431,6 @@
         // execute search action with search value:
         if (this.props.search) {
           var self = this;
-
-          clearTimeout(self._queryTimeout);
-
           self._queryTimeout = setTimeout(function () {
             self.setState({
               loading: true,
@@ -439,7 +447,8 @@
               self.setState({
                 cachedResults: results,
                 cache: cache,
-                loading: false
+                loading: false,
+                showSearchResults: true
               });
             });
           }, self.props.delay);
@@ -547,6 +556,8 @@
         }
         if (this.props.focusAfterSelect) {
           this._focus();
+        } else {
+          this._blur();
         }
       }
     }, {
@@ -579,7 +590,9 @@
             }),
             _react2.default.createElement(
               'div',
-              { className: 'ss-input' },
+              { className: 'ss-input', onClick: function onClick(e) {
+                  _this3._toggleOpen();
+                } },
               _react2.default.createElement('input', {
                 autoComplete: 'off',
                 type: 'text',
@@ -589,9 +602,6 @@
                 },
                 title: this._renderLabel(),
                 value: this.state.query,
-                onClick: function onClick(e) {
-                  _this3._toggleOpen();
-                },
                 onChange: function onChange(e) {
                   _this3._handleChange(e);
                 },
@@ -606,13 +616,18 @@
                 } })
             )
           ),
+          this.state.showSearchResults && this._getResultCount() == 0 && !!this.props.renderNoResultsMessage && _react2.default.createElement(
+            'div',
+            { className: 'ss-no-results' },
+            this.props.renderNoResultsMessage()
+          ),
           _react2.default.createElement(
             'div',
             { className: 'ss-results',
               ref: function ref(e) {
                 _this3._results = e;
               } },
-            _results && _results.map(function (results, i) {
+            this.state.showSearchResults && _results && _results.map(function (results, i) {
               return _react2.default.createElement(
                 'div',
                 {
@@ -673,7 +688,8 @@
     onFocus: _react2.default.PropTypes.func,
     onBlur: _react2.default.PropTypes.func,
     onQueryUpdated: _react2.default.PropTypes.func,
-    allowDelete: _react2.default.PropTypes.bool
+    allowDelete: _react2.default.PropTypes.bool,
+    renderNoResultsMessage: _react2.default.PropTypes.func
   };
   SmartSearch.defaultProps = {
     query: '',
@@ -689,7 +705,7 @@
     autoload: false,
     focusOnMount: false,
     filterSelected: true,
-    onQueryUpdated: function onQueryUpdated(query) {},
+    onQueryUpdated: noop,
     allowDelete: true
   };
   exports.default = SmartSearch;

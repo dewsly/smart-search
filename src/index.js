@@ -2,6 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import objectAssign from 'object-assign';
 
+const noop = () => {};
+
 class SmartSearch extends React.Component {
 
   constructor(props) {
@@ -23,7 +25,8 @@ class SmartSearch extends React.Component {
       loading: false,
       highlightIndex: -1,
       cache: {},
-      cachedResults: []
+      cachedResults: [],
+      showSearchResults: !this.props.search
     };
     this._selectItem = this._selectItem.bind(this);
     this._removeItem = this._removeItem.bind(this);
@@ -45,7 +48,7 @@ class SmartSearch extends React.Component {
 
   componentDidMount() {
     if (this.props.autoload && this.props.search) {
-      this._onQueryChange('');
+      this._onQueryChange(this.props.query || '');
     }
 
     if (this.props.focusOnMount && this._input) {
@@ -112,7 +115,7 @@ class SmartSearch extends React.Component {
   _getResults() {
     let self = this;
     let results = this.state.cachedResults && this.state.cachedResults.length ? this.state.cachedResults : this.props.results;
-    if (!this.props.search || !this.props.filterSelected) {
+    if (!this.props.filterSelected || !results) {
       return results;
     }
 
@@ -195,7 +198,7 @@ class SmartSearch extends React.Component {
 
   _isSelected(item) {
     let found = this.state.selected.filter((result) => {
-      return result.id === item.id;
+      return item.id && result.id === item.id;
     });
     return found.length;
   }
@@ -234,7 +237,7 @@ class SmartSearch extends React.Component {
     }
 
     if (this.props.onFocus) { this.props.onFocus(); }
-}
+  }
 
   _onKeyDown(e) {
     let stop = false;
@@ -301,19 +304,27 @@ class SmartSearch extends React.Component {
   }
 
   _onQueryChange(query) {
+    if (this.props.search) {
+      clearTimeout(this._queryTimeout);
+      this.setState({
+        showSearchResults: false
+      });
+    }
+
     this.setState({
       query: query
     });
     this.props.onQueryUpdated(query);
 
     // determine if query value length is >= props.minCharacters
-    if (!this.props.autoload && query.length < this.props.minCharacters) {
+    if (query.length < this.props.minCharacters) {
       return;
     }
 
     if (this.props.cache && this.state.cache[query]) {
       // set cached results to value of cache
       this.setState({
+        showSearchResults: true,
         cachedResults: this.state.cache[query]
       });
       return;
@@ -321,9 +332,6 @@ class SmartSearch extends React.Component {
     // execute search action with search value:
     if (this.props.search) {
       var self = this;
-
-      clearTimeout(self._queryTimeout);
-
       self._queryTimeout = setTimeout(function () {
         self.setState({
           loading: true,
@@ -340,7 +348,8 @@ class SmartSearch extends React.Component {
           self.setState({
             cachedResults: results,
             cache: cache,
-            loading: false
+            loading: false,
+            showSearchResults: true
           });
         });
       }, self.props.delay);
@@ -439,6 +448,8 @@ class SmartSearch extends React.Component {
     }
     if (this.props.focusAfterSelect) {
       this._focus();
+    } else {
+      this._blur();
     }
   }
 
@@ -457,7 +468,7 @@ class SmartSearch extends React.Component {
               {this._renderSelectedItem(item)}
             </div>
           )}
-          <div className="ss-input">
+          <div className="ss-input" onClick={(e) => { this._toggleOpen(); }}>
             <input
               autoComplete="off"
               type="text"
@@ -465,16 +476,23 @@ class SmartSearch extends React.Component {
               ref={(e) => { this._input = e; }}
               title={this._renderLabel()}
               value={this.state.query}
-              onClick={(e) => { this._toggleOpen(); }}
               onChange={(e) => { this._handleChange(e); }}
               onFocus={() => { this._onFocus(); }}
               onBlur={() => { this._onBlur(); }}
               onKeyDown={(e) => { this._onKeyDown(e); }} />
           </div>
         </div>
+        {(this.state.showSearchResults &&
+          this._getResultCount() == 0 &&
+          !!this.props.renderNoResultsMessage
+        ) && (
+          <div className="ss-no-results">
+            {this.props.renderNoResultsMessage()}
+          </div>
+        )}
         <div className="ss-results"
              ref={(e) => { this._results = e; }}>
-          {_results && _results.map((results, i) =>
+          {(this.state.showSearchResults && _results) && _results.map((results, i) =>
             <div
               className="ss-group"
               key={i}>
@@ -521,7 +539,8 @@ SmartSearch.propTypes = {
   onFocus: React.PropTypes.func,
   onBlur: React.PropTypes.func,
   onQueryUpdated: React.PropTypes.func,
-  allowDelete: React.PropTypes.bool
+  allowDelete: React.PropTypes.bool,
+  renderNoResultsMessage: React.PropTypes.func
 };
 SmartSearch.defaultProps = {
   query: '',
@@ -537,7 +556,7 @@ SmartSearch.defaultProps = {
   autoload: false,
   focusOnMount: false,
   filterSelected: true,
-  onQueryUpdated: function (query) {},
+  onQueryUpdated: noop,
   allowDelete: true
 };
 export default SmartSearch;

@@ -383,9 +383,9 @@ describe('Full DOM Rendering', () => {
 
   });
 
-  it('should immediately trigger props.search when props.autoload == 1', (done) => {
+  it('should immediately trigger props.search when props.autoload == 1 and query >= minchars', (done) => {
     const search = sinon.spy();
-    const wrapper = mount(<SmartSearch delay={0} autoload={true} search={search} />);
+    const wrapper = mount(<SmartSearch delay={0} autoload={true} search={search} minCharacters={0} />);
     setTimeout(function () {
       expect(search.callCount).to.equal(1);
       done();
@@ -425,21 +425,21 @@ describe('Full DOM Rendering', () => {
       );
     };
 
-    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} renderItem={renderItem} />);
+    const wrapper = mount(<SmartSearch results={results} cache={true} renderItem={renderItem} />);
     wrapper.find('#item-1').first().closest('.ss-item').simulate('click');
     expect(wrapper.state().selected).to.have.length(1);
     expect(wrapper.find('#item-1')).to.have.length(0);
   });
 
   it('highlights option selected with keyboard', () => {
-    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} />);
+    const wrapper = mount(<SmartSearch results={results} cache={true} />);
     wrapper.find('input[type="text"]').simulate('click');
     wrapper.find('input[type="text"]').simulate('keyDown', {which:40});
     expect(wrapper.state().highlightIndex).to.equal(0);
   });
 
   it('should not select item when pressing enter key on highlightIndex -1', () => {
-    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} />);
+    const wrapper = mount(<SmartSearch results={results} cache={true} />);
     wrapper.find('input[type="text"]').simulate('click');
     expect(wrapper.state().highlightIndex).to.equal(-1);
     wrapper.find('input[type="text"]').simulate('keyDown', {which:13});
@@ -447,7 +447,7 @@ describe('Full DOM Rendering', () => {
   });
 
   it('should select item when pressing enter on highlightIndex != -1', () => {
-    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} />);
+    const wrapper = mount(<SmartSearch results={results} cache={true} />);
     wrapper.find('input[type="text"]').simulate('click');
     wrapper.find('input[type="text"]').simulate('keyDown', {which:40});
     wrapper.find('input[type="text"]').simulate('keyDown', {which:13});
@@ -469,7 +469,7 @@ describe('Full DOM Rendering', () => {
   });
 
   it('should not select item when pressing spacebar on highlightIndex -1', () => {
-    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} />);
+    const wrapper = mount(<SmartSearch results={results} cache={true} />);
     wrapper.find('input[type="text"]').simulate('click');
     expect(wrapper.state().highlightIndex).to.equal(-1);
     wrapper.find('input[type="text"]').simulate('keyDown', {which:32});
@@ -485,7 +485,7 @@ describe('Full DOM Rendering', () => {
   });
 
   it('should select item when pressing spacebar on highlightIndex != -1', () => {
-    const wrapper = mount(<SmartSearch search={() => {}} results={results} cache={true} />);
+    const wrapper = mount(<SmartSearch results={results} cache={true} />);
     wrapper.find('input[type="text"]').simulate('click');
     wrapper.find('input[type="text"]').simulate('keyDown', {which:40});
     wrapper.find('input[type="text"]').simulate('keyDown', {which:32});
@@ -496,7 +496,7 @@ describe('Full DOM Rendering', () => {
     const onRemove = sinon.spy();
     const selected = results[0].items;
     expect(selected).to.have.length(2);
-    const wrapper = mount(<SmartSearch search={() => {}} selected={selected} results={results} onRemove={onRemove} cache={true} multi={true} />);
+    const wrapper = mount(<SmartSearch selected={selected} results={results} onRemove={onRemove} cache={true} multi={true} />);
     expect(onRemove.callCount).to.equal(0);
     expect(wrapper.find('.ss-selected-item')).to.have.length(2);
     expect(wrapper.state().selected).to.equal(selected);
@@ -516,7 +516,6 @@ describe('Full DOM Rendering', () => {
     expect(selected).to.have.length(2);
     const wrapper = mount(
       <SmartSearch
-        search={() => {}}
         selected={selected}
         results={results}
         onRemove={onRemove}
@@ -545,6 +544,7 @@ describe('Full DOM Rendering', () => {
         selected={[results[0].items[0]]}
         filterSelected={true}
         autoload={true}
+        minCharacters={0}
         delay={0}
         renderItem={renderItem}
       />
@@ -554,6 +554,22 @@ describe('Full DOM Rendering', () => {
       done();
     });
 
+  });
+
+  it('should not filter results with no id', (done) => {
+    var resultsWithNoId = [{'items': [{'name': 'Alf'}, {'name': 'Bananas'}]}];
+    const wrapper = mount(
+      <SmartSearch
+        results={resultsWithNoId}
+      />
+    );
+    setTimeout(function() {
+      wrapper.find('.ss-item').first().simulate('click');
+      setTimeout(function() {
+        expect(wrapper.find('.ss-item')).to.have.length(2);
+        done();
+      }, 200);
+    });
   });
 
   it('should update selected after mount', () => {
@@ -658,6 +674,137 @@ describe('Full DOM Rendering', () => {
       expect(wrapper.state('cachedResults').length).to.equal(2);
       done();
     });
+  });
+
+  it('should render no results prop if no search results', (done) => {
+    const renderNoResultsMessage = sinon.spy();
+    const search = function (query, callback) {
+      callback(null, [{"items": []}]);
+    };
+    const wrapper = mount(
+      <SmartSearch
+        delay={0}
+        search={search}
+        query=''
+        results={noresults}
+        renderNoResultsMessage={renderNoResultsMessage}
+      />
+    );
+    wrapper.setProps({ query: 'sea' });
+    setTimeout(function() {
+      expect(wrapper.state('showSearchResults')).to.equal(true);
+      expect(renderNoResultsMessage.callCount).to.equal(1);
+      done();
+    });
+  });
+
+  it('should clear results when query changes to less than minCharacters', (done) => {
+    var items = [
+      {
+        label: 'Schools',
+        items: [{
+          id: 1,
+          name: 'place'
+        },
+        {
+          id: 2,
+          name: 'place 2'
+        }]
+    }];
+    const search = function (query, callback) {
+      callback(null, [{"items": items}]);
+    };
+    const wrapper = mount(
+      <SmartSearch
+        delay={0}
+        search={search}
+        minCharacters={10}
+        query="spacepants"
+        results={items}
+        autoload={true}
+      />
+    );
+    setTimeout(function () {
+      expect(wrapper.state('showSearchResults')).to.equal(true);
+      expect(wrapper.find('.ss-results .ss-group')).to.have.length(1);
+      wrapper.setProps({ query: 'spacepant' });
+      setTimeout(function() {
+        expect(wrapper.state('showSearchResults')).to.equal(false);
+        expect(wrapper.find('.ss-results .ss-group')).to.have.length(0);
+        done();
+      });
+    });
+  });
+
+  it('should close results after selecting on non-searchable field', (done) => {
+    const wrapper = mount(
+      <SmartSearch
+        autoload={true}
+        cache={true}
+        minCharacters={1}
+        results={results}
+        searchable={false}
+        focusAfterRemove={false}
+        focusAfterSelect={false}
+        focusOnMount={false}
+        multi={false}
+        showGroupHeading={false} />
+    );
+    // simulate click and focus:
+    wrapper.find('.ss-input').first().simulate('click');
+
+    expect(wrapper.state('open')).to.equal(true);
+
+    // simulate clicking on the item and blurring the input:
+    wrapper.find('.ss-item').first().simulate('click');
+
+    setTimeout(function () {
+      expect(wrapper.state('open')).to.equal(false);
+      done();
+    }, 200);
+  });
+
+  it('should showSearchResults when cached results are used', (done) => {
+    var items = [
+      {
+        label: 'Schools',
+        items: [{
+          id: 1,
+          name: 'place'
+        },
+        {
+          id: 2,
+          name: 'place 2'
+        }]
+    }];
+    const search = function (query, callback) {
+      callback(null, [{"items": items}]);
+    };
+    const wrapper = mount(
+      <SmartSearch
+        delay={0}
+        search={search}
+        minCharacters={10}
+        query="spacepants"
+        results={items}
+        autoload={true}
+        cache={true}
+      />
+    );
+
+    setTimeout(function () {
+        expect(wrapper.state('showSearchResults')).to.equal(true);
+        wrapper.setProps({ query: 'spacepant' });
+        setTimeout(function () {
+          expect(wrapper.state('showSearchResults')).to.equal(false);
+          wrapper.setProps({ query: 'spacepants' });
+          setTimeout(function() {
+              expect(wrapper.state('showSearchResults')).to.equal(true);
+              done();
+          });
+        });
+    });
+
   });
 
 });
