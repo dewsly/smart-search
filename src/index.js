@@ -237,7 +237,7 @@ class SmartSearch extends React.Component {
     }
 
     if (this.props.onFocus) { this.props.onFocus(); }
-}
+  }
 
   _onKeyDown(e) {
     let stop = false;
@@ -448,6 +448,8 @@ class SmartSearch extends React.Component {
     }
     if (this.props.focusAfterSelect) {
       this._focus();
+    } else {
+      this._blur();
     }
   }
 
@@ -466,7 +468,7 @@ class SmartSearch extends React.Component {
               {this._renderSelectedItem(item)}
             </div>
           )}
-          <div className="ss-input">
+          <div className="ss-input" onClick={(e) => { this._toggleOpen(); }}>
             <input
               autoComplete="off"
               type="text"
@@ -474,7 +476,6 @@ class SmartSearch extends React.Component {
               ref={(e) => { this._input = e; }}
               title={this._renderLabel()}
               value={this.state.query}
-              onClick={(e) => { this._toggleOpen(); }}
               onChange={(e) => { this._handleChange(e); }}
               onFocus={() => { this._onFocus(); }}
               onBlur={() => { this._onBlur(); }}

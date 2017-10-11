@@ -736,7 +736,35 @@ describe('Full DOM Rendering', () => {
     });
   });
 
-  it('should showSearchResults cached result are used', (done) => {
+  it('should close results after selecting on non-searchable field', (done) => {
+    const wrapper = mount(
+      <SmartSearch
+        autoload={true}
+        cache={true}
+        minCharacters={1}
+        results={results}
+        searchable={false}
+        focusAfterRemove={false}
+        focusAfterSelect={false}
+        focusOnMount={false}
+        multi={false}
+        showGroupHeading={false} />
+    );
+    // simulate click and focus:
+    wrapper.find('.ss-input').first().simulate('click');
+
+    expect(wrapper.state('open')).to.equal(true);
+
+    // simulate clicking on the item and blurring the input:
+    wrapper.find('.ss-item').first().simulate('click');
+
+    setTimeout(function () {
+      expect(wrapper.state('open')).to.equal(false);
+      done();
+    }, 200);
+  });
+
+  it('should showSearchResults when cached results are used', (done) => {
     var items = [
       {
         label: 'Schools',

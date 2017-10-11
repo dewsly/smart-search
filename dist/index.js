@@ -556,6 +556,8 @@
         }
         if (this.props.focusAfterSelect) {
           this._focus();
+        } else {
+          this._blur();
         }
       }
     }, {
@@ -588,7 +590,9 @@
             }),
             _react2.default.createElement(
               'div',
-              { className: 'ss-input' },
+              { className: 'ss-input', onClick: function onClick(e) {
+                  _this3._toggleOpen();
+                } },
               _react2.default.createElement('input', {
                 autoComplete: 'off',
                 type: 'text',
@@ -598,9 +602,6 @@
                 },
                 title: this._renderLabel(),
                 value: this.state.query,
-                onClick: function onClick(e) {
-                  _this3._toggleOpen();
-                },
                 onChange: function onChange(e) {
                   _this3._handleChange(e);
                 },
